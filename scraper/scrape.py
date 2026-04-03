@@ -199,6 +199,7 @@ def infer_day(start_time_str, page_text=""):
         for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M",
                     "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
             try:
+                # Trim input to the expected length for this format to avoid trailing chars
                 expected_len = len(datetime(2000, 1, 1, 0, 0, 0).strftime(fmt))
                 dt = datetime.strptime(cleaned[:expected_len], fmt)
                 date_str = dt.strftime("%Y-%m-%d")
