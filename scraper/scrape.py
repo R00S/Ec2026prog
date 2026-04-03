@@ -18,6 +18,7 @@ Supports Grenadine-powered event sites by trying:
 
 import io
 import json
+import os
 import re
 import sys
 from datetime import datetime, timedelta
@@ -40,6 +41,48 @@ SESSION.headers.update({
 })
 TIMEOUT = 30
 
+# Directory to save raw HTTP responses for inspection
+RAW_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "raw")
+RAW_MAX_BYTES = 500 * 1024  # 500 KB cap per file
+
+
+def _save_raw(url, resp):
+    """Save a raw HTTP response body to RAW_DIR for later inspection.
+
+    Files are named after the URL path, sanitised to be filesystem-safe.
+    Binary responses (e.g. PDF) are saved as-is; text responses are UTF-8.
+    Files are capped at RAW_MAX_BYTES to avoid huge JS bundles bloating the repo.
+    """
+    os.makedirs(RAW_DIR, exist_ok=True)
+    parsed = urlparse(url)
+    slug = (parsed.netloc + parsed.path).strip("/").replace("/", "_") or "root"
+    slug = re.sub(r"[^A-Za-z0-9._-]", "_", slug)
+    # Append a sensible extension if not already present
+    ct = resp.headers.get("content-type", "")
+    if not os.path.splitext(slug)[1]:
+        if "json" in ct:
+            slug += ".json"
+        elif "javascript" in ct:
+            slug += ".js"
+        elif "html" in ct:
+            slug += ".html"
+        elif "pdf" in ct:
+            slug += ".pdf"
+        elif "calendar" in ct or "ics" in ct:
+            slug += ".ics"
+        else:
+            slug += ".txt"
+    path = os.path.join(RAW_DIR, slug)
+    try:
+        content = resp.content[:RAW_MAX_BYTES]
+        with open(path, "wb") as fh:
+            fh.write(content)
+        truncated = " (truncated)" if len(resp.content) > RAW_MAX_BYTES else ""
+        print(f"  Saved raw response ({len(content)} bytes{truncated}): {path}", file=sys.stderr)
+    except OSError as e:
+        print(f"  Could not save raw response for {url}: {e}", file=sys.stderr)
+
+
 # Eastercon 2026 dates (Fri 3 - Mon 6 April 2026)
 DATE_TO_DAY = {
     "2026-04-03": "Friday",
@@ -60,6 +103,7 @@ def fetch(url, **kwargs):
     try:
         resp = SESSION.get(url, timeout=TIMEOUT, **kwargs)
         resp.raise_for_status()
+        _save_raw(url, resp)
         return resp
     except requests.exceptions.ConnectionError as e:
         print(f"Connection error fetching {url}: {e}", file=sys.stderr)
