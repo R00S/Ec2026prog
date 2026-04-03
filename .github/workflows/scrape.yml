@@ -4,6 +4,13 @@ on:
   schedule:
     - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'scraper/**'
+      - '.github/workflows/scrape.yml'
 
 permissions:
   contents: write
