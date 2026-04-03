@@ -62,10 +62,9 @@ class ProgrammeFetcher {
     // ── GitHub raw programme.json ────────────────────────────────────────
 
     private fun tryGitHubRaw(): List<Event> {
-        val url = "https://raw.githubusercontent.com/R00S/Ec2026prog/main/app/src/main/assets/programme.json"
-        Log.d(TAG, "Trying GitHub raw: $url")
+        Log.d(TAG, "Trying GitHub raw: $GITHUB_RAW_URL")
         return try {
-            val request = Request.Builder().url(url)
+            val request = Request.Builder().url(GITHUB_RAW_URL)
                 .header("Accept", "application/json")
                 .build()
             val response = client.newCall(request).execute()
@@ -457,6 +456,8 @@ class ProgrammeFetcher {
 
     companion object {
         private const val TAG = "ProgrammeFetcher"
+        private const val GITHUB_RAW_URL =
+            "https://raw.githubusercontent.com/R00S/Ec2026prog/main/app/src/main/assets/programme.json"
         private val DAY_NAMES = mapOf(
             "fri" to "Friday", "friday" to "Friday",
             "sat" to "Saturday", "saturday" to "Saturday",

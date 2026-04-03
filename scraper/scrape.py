@@ -438,7 +438,7 @@ def scrape_html():
     if not links:
         print("No item links found - trying broader extraction", file=sys.stderr)
         base_host = urlparse(BASE_URL).netloc
-        broader = set()
+        broader_links = set()
         for a in soup.find_all("a", href=True):
             abs_href = urljoin(BASE_URL, a["href"])
             parsed = urlparse(abs_href)
@@ -446,8 +446,8 @@ def scrape_html():
             if (parsed.netloc == base_host and path and path != "/"
                     and not path.endswith((".css", ".js", ".png", ".jpg"))
                     and "#" not in path):
-                broader.add(abs_href.split("?")[0].split("#")[0])
-        links = sorted(broader)
+                broader_links.add(abs_href.split("?")[0].split("#")[0])
+        links = sorted(broader_links)
         print(f"Broader extraction found {len(links)} links", file=sys.stderr)
 
     if not links:
