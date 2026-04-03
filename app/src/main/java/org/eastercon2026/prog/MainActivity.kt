@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -47,6 +48,9 @@ class MainActivity : AppCompatActivity() {
 
     private var allEvents: List<Event> = emptyList()
     private var selectedDay: String = DAY_ALL
+    private val visibleStates: MutableSet<EventState> = mutableSetOf(
+        EventState.GOING, EventState.INTERESTED, EventState.DEFAULT
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,13 +76,15 @@ class MainActivity : AppCompatActivity() {
         )
 
         setupTabs()
+        setupFilterChips()
         loadFromDatabase()
         checkVersion()
     }
 
     override fun onResume() {
         super.onResume()
-        // Refresh display in case states changed in detail view
+        // Reload states from SharedPreferences in case they changed in detail view
+        stateManager.reload()
         if (allEvents.isNotEmpty()) {
             displayEvents(allEvents)
         }
@@ -126,6 +132,23 @@ class MainActivity : AppCompatActivity() {
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+    }
+
+    private fun setupFilterChips() {
+        val chipStateMap = mapOf(
+            R.id.chipGoing to EventState.GOING,
+            R.id.chipInterested to EventState.INTERESTED,
+            R.id.chipDefault to EventState.DEFAULT,
+            R.id.chipHidden to EventState.HIDDEN,
+            R.id.chipPassed to EventState.PASSED
+        )
+        for ((chipId, state) in chipStateMap) {
+            val chip = findViewById<Chip>(chipId)
+            chip.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) visibleStates.add(state) else visibleStates.remove(state)
+                displayEvents(allEvents)
+            }
+        }
     }
 
     private fun loadFromDatabase() {
@@ -211,7 +234,7 @@ class MainActivity : AppCompatActivity() {
                 userState
             }
             EventAdapter.EventItem(event, effectiveState)
-        }
+        }.filter { it.state in visibleStates }
 
         adapter.submitList(items)
         emptyView.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE

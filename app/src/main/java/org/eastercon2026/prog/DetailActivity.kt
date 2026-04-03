@@ -1,12 +1,13 @@
 package org.eastercon2026.prog
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
 import org.eastercon2026.prog.model.EventState
 import org.eastercon2026.prog.util.StateManager
 
@@ -15,9 +16,9 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var stateManager: StateManager
     private lateinit var itemId: String
 
-    private lateinit var btnGoing: Button
-    private lateinit var btnInterested: Button
-    private lateinit var btnHidden: Button
+    private lateinit var btnGoing: MaterialButton
+    private lateinit var btnInterested: MaterialButton
+    private lateinit var btnHidden: MaterialButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,13 +91,19 @@ class DetailActivity : AppCompatActivity() {
         setButtonActive(btnHidden, activeHidden, R.color.accent_hidden)
     }
 
-    private fun setButtonActive(button: Button, active: Boolean, colorRes: Int) {
+    private fun setButtonActive(button: MaterialButton, active: Boolean, colorRes: Int) {
+        val color = ContextCompat.getColor(this, colorRes)
         if (active) {
-            button.backgroundTintList = ContextCompat.getColorStateList(this, colorRes)
+            button.backgroundTintList = ColorStateList.valueOf(color)
             button.setTextColor(ContextCompat.getColor(this, android.R.color.white))
+            button.strokeColor = ColorStateList.valueOf(color)
         } else {
-            button.backgroundTintList = null
-            button.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
+            button.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(this, android.R.color.transparent)
+            )
+            button.setTextColor(color)
+            button.strokeColor = ColorStateList.valueOf(color)
+            button.strokeWidth = resources.getDimensionPixelSize(R.dimen.button_stroke_width)
         }
     }
 

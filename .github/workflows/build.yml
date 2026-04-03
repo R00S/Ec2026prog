@@ -34,6 +34,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Cache debug signing keystore
+        id: debug-keystore
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: android-debug-keystore-v1
+
+      - name: Generate consistent debug keystore
+        if: steps.debug-keystore.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/.android
+          keytool -genkeypair -v \
+            -keystore ~/.android/debug.keystore \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 \
+            -validity 10000 \
+            -storepass android \
+            -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US"
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -57,13 +77,20 @@ jobs:
         run: |
           VERSION=$(grep 'versionName' app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/' | head -1)
           echo "version=${VERSION:-1.0.0}" >> "$GITHUB_OUTPUT"
-          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          echo "tag=v${VERSION:-1.0.0}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION:-1.0.0}" >> "$GITHUB_OUTPUT"
 
       - name: Collect APK
         run: |
           mkdir -p release-artifacts
           find app/build/outputs/apk/release -name "*.apk" | head -1 | xargs -I{} cp {} release-artifacts/Ec2026prog-${{ steps.version.outputs.version }}.apk
+
+      - name: Delete existing release for this version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          # Delete existing release if present (allows re-release of same version)
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
