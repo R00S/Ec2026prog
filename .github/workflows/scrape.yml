@@ -4,6 +4,15 @@ on:
   schedule:
     - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+      - 'copilot/**'
+    paths:
+      - 'scraper/**'
+      - 'app/src/main/assets/programme.json'
+      - '.github/workflows/scrape.yml'
 
 permissions:
   contents: write

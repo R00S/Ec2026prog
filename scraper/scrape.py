@@ -8,10 +8,15 @@ Usage:
 Outputs JSON array of programme items to stdout.
 Exits with code 0 on success, 1 on failure.
 
-Supports Grenadine-powered event sites by trying the program.json API
-first, then falling back to HTML scraping.
+Supports Grenadine-powered event sites by trying:
+  1. ICS calendar download from alt-formats page
+  2. PDF download from alt-formats page
+  3. Grenadine program.json API
+  4. Other JSON API endpoints
+  5. HTML scraping (fallback)
 """
 
+import io
 import json
 import re
 import sys
@@ -338,6 +343,262 @@ def normalise_json_item(raw):
 
 MIN_EVENTS_IN_LIST = 5  # Minimum items to consider a list as programme data
 
+# ── BST timezone for Eastercon 2026 (Edinburgh, April) ─────────────────
+try:
+    import pytz as _pytz
+    _BST = _pytz.timezone("Europe/London")
+except ImportError:
+    _BST = None
+
+
+def _to_naive_local(dt):
+    """Convert a possibly timezone-aware datetime to a naive local datetime.
+
+    Uses Europe/London (BST, UTC+1 in April) for the conversion.
+    """
+    if dt is None:
+        return None
+    if not hasattr(dt, "tzinfo"):
+        return dt  # already a date, not datetime
+    if dt.tzinfo is None:
+        return dt
+    if _BST is not None:
+        return dt.astimezone(_BST).replace(tzinfo=None)
+    # Fallback: manually add 1 hour for BST
+    from datetime import timedelta
+    return (dt.utctimetuple() and dt.replace(tzinfo=None) + timedelta(hours=1))
+
+
+def _discover_alt_format_links():
+    """Fetch the alt-formats page and return (pdf_urls, ics_urls)."""
+    pdf_urls = []
+    ics_urls = []
+    alt_resp = fetch(f"{BASE_URL}/alt-formats")
+    if alt_resp is None:
+        return pdf_urls, ics_urls
+    soup = BeautifulSoup(alt_resp.text, "lxml")
+    for a in soup.find_all("a", href=True):
+        href = a["href"].strip()
+        link_text = a.get_text(strip=True).lower()
+        abs_href = urljoin(BASE_URL, href)
+        if ".pdf" in href.lower() or "pdf" in link_text:
+            if abs_href not in pdf_urls:
+                pdf_urls.append(abs_href)
+        if ".ics" in href.lower() or "ical" in href.lower() or "icalendar" in link_text or "calendar" in link_text:
+            if abs_href not in ics_urls:
+                ics_urls.append(abs_href)
+    return pdf_urls, ics_urls
+
+
+def try_ics():
+    """Try to fetch and parse an ICS calendar file."""
+    try:
+        from icalendar import Calendar
+    except ImportError:
+        print("icalendar not installed, skipping ICS", file=sys.stderr)
+        return None
+
+    pdf_urls, ics_urls = _discover_alt_format_links()
+    # Append common fallback paths
+    for path in ("/schedule.ics", "/programme.ics", "/calendar.ics", "/events.ics"):
+        url = BASE_URL + path
+        if url not in ics_urls:
+            ics_urls.append(url)
+
+    for url in ics_urls:
+        print(f"Trying ICS: {url}", file=sys.stderr)
+        resp = fetch(url)
+        if resp is None:
+            continue
+        raw = resp.content
+        text_preview = raw[:200].decode("utf-8", errors="replace")
+        if "BEGIN:VCALENDAR" not in text_preview and "BEGIN:VEVENT" not in text_preview:
+            print(f"  Not an ICS file: {url}", file=sys.stderr)
+            continue
+        try:
+            cal = Calendar.from_ical(raw)
+            events = []
+            for component in cal.walk():
+                if component.name != "VEVENT":
+                    continue
+                uid = str(component.get("UID", ""))
+                item_id = re.sub(r"@.*$", "", uid) or str(2000 + len(events))
+                title = str(component.get("SUMMARY", "")).strip()
+                if not title:
+                    continue
+                location = str(component.get("LOCATION", "")).strip()
+                desc = str(component.get("DESCRIPTION", "")).strip()
+
+                dtstart = component.get("DTSTART")
+                dtend = component.get("DTEND")
+                start_dt = _to_naive_local(dtstart.dt) if dtstart else None
+                end_dt = _to_naive_local(dtend.dt) if dtend else None
+
+                # Handle all-day events (date, not datetime)
+                if start_dt is not None and not hasattr(start_dt, "hour"):
+                    from datetime import datetime as _dt
+                    start_dt = _dt(start_dt.year, start_dt.month, start_dt.day, 0, 0, 0)
+                if end_dt is not None and not hasattr(end_dt, "hour"):
+                    from datetime import datetime as _dt
+                    end_dt = _dt(end_dt.year, end_dt.month, end_dt.day, 0, 0, 0)
+
+                start_str = start_dt.strftime("%Y-%m-%dT%H:%M:%S") if start_dt else ""
+                end_str = end_dt.strftime("%Y-%m-%dT%H:%M:%S") if end_dt else ""
+                day = infer_day(start_str, "")
+
+                events.append({
+                    "itemId": item_id,
+                    "title": title,
+                    "startTime": start_str,
+                    "endTime": end_str,
+                    "location": location,
+                    "description": desc,
+                    "day": day,
+                })
+
+            if events:
+                print(f"Got {len(events)} events from ICS: {url}", file=sys.stderr)
+                return events
+        except Exception as e:
+            print(f"ICS parse error for {url}: {e}", file=sys.stderr)
+    return None
+
+
+def _parse_grenadine_pdf_bytes(pdf_bytes):
+    """Parse a Grenadine-style programme PDF using pdfplumber.
+
+    Grenadine PDFs are typically a list of events sorted by day and time.
+    Each event occupies one or more lines: time range, title, room, description.
+    """
+    import pdfplumber
+
+    # Regexes for parsing
+    time_re = re.compile(
+        r'(\d{1,2}:\d{2})\s*(?:am|pm)?\s*[-–]\s*(\d{1,2}:\d{2})\s*(?:am|pm)?',
+        re.IGNORECASE,
+    )
+    day_re = re.compile(r'\b(Friday|Saturday|Sunday|Monday)\b', re.IGNORECASE)
+    day_map = {
+        "Friday": "2026-04-03",
+        "Saturday": "2026-04-04",
+        "Sunday": "2026-04-05",
+        "Monday": "2026-04-06",
+    }
+
+    events = []
+    current_day = "Friday"
+    event_id_counter = 2000
+
+    with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
+        for page in pdf.pages:
+            text = page.extract_text(x_tolerance=3, y_tolerance=3) or ""
+            lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+
+            i = 0
+            while i < len(lines):
+                line = lines[i]
+
+                # Detect day headers
+                day_match = day_re.search(line)
+                if day_match and len(line) < 60:
+                    current_day = day_match.group(1).capitalize()
+                    i += 1
+                    continue
+
+                # Detect time ranges — each starts a new event
+                time_match = time_re.search(line)
+                if time_match:
+                    start_hhmm = time_match.group(1)
+                    end_hhmm = time_match.group(2)
+                    date_str = day_map.get(current_day, "2026-04-03")
+
+                    def to_iso(hhmm, date):
+                        """Convert HH:MM to ISO datetime string."""
+                        try:
+                            h, m = map(int, hhmm.split(":"))
+                            return f"{date}T{h:02d}:{m:02d}:00"
+                        except ValueError:
+                            return ""
+
+                    start_iso = to_iso(start_hhmm, date_str)
+                    end_iso = to_iso(end_hhmm, date_str)
+
+                    # Title is on the same line (after the time) or the next non-time line
+                    title_part = line[time_match.end():].strip().lstrip("-–").strip()
+                    if not title_part and i + 1 < len(lines) and not time_re.search(lines[i + 1]):
+                        i += 1
+                        title_part = lines[i]
+
+                    # Location heuristic: the next short line that's not a time range
+                    location = ""
+                    if (i + 1 < len(lines)
+                            and not time_re.search(lines[i + 1])
+                            and not day_re.match(lines[i + 1])
+                            and len(lines[i + 1]) < 60):
+                        i += 1
+                        location = lines[i]
+
+                    # Collect description lines until next time/day
+                    desc_lines = []
+                    while (i + 1 < len(lines)
+                           and not time_re.search(lines[i + 1])
+                           and not day_re.match(lines[i + 1])):
+                        i += 1
+                        desc_lines.append(lines[i])
+
+                    description = " ".join(desc_lines)
+
+                    if title_part:
+                        events.append({
+                            "itemId": str(event_id_counter),
+                            "title": title_part,
+                            "startTime": start_iso,
+                            "endTime": end_iso,
+                            "location": location,
+                            "description": description,
+                            "day": current_day,
+                        })
+                        event_id_counter += 1
+
+                i += 1
+
+    return events
+
+
+def try_pdf():
+    """Try to fetch and parse a PDF programme from the alt-formats page."""
+    try:
+        import pdfplumber  # noqa: F401
+    except ImportError:
+        print("pdfplumber not installed, skipping PDF", file=sys.stderr)
+        return None
+
+    pdf_urls, _ics = _discover_alt_format_links()
+    # Append common fallback paths
+    for path in ("/programme.pdf", "/guide.pdf", "/full-programme.pdf", "/schedule.pdf"):
+        url = BASE_URL + path
+        if url not in pdf_urls:
+            pdf_urls.append(url)
+
+    for url in pdf_urls:
+        print(f"Trying PDF: {url}", file=sys.stderr)
+        resp = fetch(url)
+        if resp is None:
+            continue
+        # Verify it really is a PDF
+        if not (resp.content[:4] == b"%PDF" or "pdf" in resp.headers.get("content-type", "")):
+            print(f"  Not a PDF: {url}", file=sys.stderr)
+            continue
+        try:
+            events = _parse_grenadine_pdf_bytes(resp.content)
+            if events:
+                print(f"Got {len(events)} events from PDF: {url}", file=sys.stderr)
+                return events
+            print(f"  PDF parsed but no events found: {url}", file=sys.stderr)
+        except Exception as e:
+            print(f"PDF parse error for {url}: {e}", file=sys.stderr)
+    return None
+
 
 def _extract_json_value(text, start_pos):
     """Extract a complete JSON value (array or object) starting at start_pos.
@@ -469,7 +730,19 @@ def scrape_html():
 
 
 def main():
-    # First try Grenadine program.json API (used by convention guide sites)
+    # Try ICS calendar first — most structured and reliable format
+    ics_events = try_ics()
+    if ics_events:
+        print(json.dumps(ics_events, ensure_ascii=False, indent=2))
+        return 0
+
+    # Try PDF from alt-formats page
+    pdf_events = try_pdf()
+    if pdf_events:
+        print(json.dumps(pdf_events, ensure_ascii=False, indent=2))
+        return 0
+
+    # Try Grenadine program.json API (used by convention guide sites)
     grenadine_data = try_grenadine_api()
     if grenadine_data:
         events = [normalise_grenadine_item(item) for item in grenadine_data]
