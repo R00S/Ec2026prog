@@ -18,9 +18,10 @@ Supports Grenadine-powered event sites by trying:
 
 import io
 import json
+import os
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import urljoin, urlparse
 
 try:
@@ -39,6 +40,48 @@ SESSION.headers.update({
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 })
 TIMEOUT = 30
+
+# Directory to save raw HTTP responses for inspection
+RAW_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "raw")
+RAW_MAX_BYTES = 500 * 1024  # 500 KB cap per file
+
+
+def _save_raw(url, resp):
+    """Save a raw HTTP response body to RAW_DIR for later inspection.
+
+    Files are named after the URL path, sanitised to be filesystem-safe.
+    Binary responses (e.g. PDF) are saved as-is; text responses are UTF-8.
+    Files are capped at RAW_MAX_BYTES to avoid huge JS bundles bloating the repo.
+    """
+    os.makedirs(RAW_DIR, exist_ok=True)
+    parsed = urlparse(url)
+    slug = (parsed.netloc + parsed.path).strip("/").replace("/", "_") or "root"
+    slug = re.sub(r"[^A-Za-z0-9._-]", "_", slug)
+    # Append a sensible extension if not already present
+    ct = resp.headers.get("content-type", "")
+    if not os.path.splitext(slug)[1]:
+        if "json" in ct:
+            slug += ".json"
+        elif "javascript" in ct:
+            slug += ".js"
+        elif "html" in ct:
+            slug += ".html"
+        elif "pdf" in ct:
+            slug += ".pdf"
+        elif "calendar" in ct or "ics" in ct:
+            slug += ".ics"
+        else:
+            slug += ".txt"
+    path = os.path.join(RAW_DIR, slug)
+    try:
+        content = resp.content[:RAW_MAX_BYTES]
+        with open(path, "wb") as fh:
+            fh.write(content)
+        truncated = " (truncated)" if len(resp.content) > RAW_MAX_BYTES else ""
+        print(f"  Saved raw response ({len(content)} bytes{truncated}): {path}", file=sys.stderr)
+    except OSError as e:
+        print(f"  Could not save raw response for {url}: {e}", file=sys.stderr)
+
 
 # Eastercon 2026 dates (Fri 3 - Mon 6 April 2026)
 DATE_TO_DAY = {
@@ -60,6 +103,7 @@ def fetch(url, **kwargs):
     try:
         resp = SESSION.get(url, timeout=TIMEOUT, **kwargs)
         resp.raise_for_status()
+        _save_raw(url, resp)
         return resp
     except requests.exceptions.ConnectionError as e:
         print(f"Connection error fetching {url}: {e}", file=sys.stderr)
@@ -73,6 +117,13 @@ def fetch(url, **kwargs):
     except Exception as e:
         print(f"Error fetching {url}: {e}", file=sys.stderr)
         return None
+
+
+def _log_non_json(url, resp):
+    """Log what a URL actually returned when it wasn't usable JSON."""
+    ct = resp.headers.get("content-type", "(no content-type)")
+    preview = resp.text.strip()[:120].replace("\n", " ")
+    print(f"  {url} -> {resp.status_code} [{ct}] {preview!r}", file=sys.stderr)
 
 
 def try_grenadine_api():
@@ -93,6 +144,7 @@ def try_grenadine_api():
         text = resp.text.strip()
         # Accept JSON arrays OR JSON objects (the latter may wrap the list)
         if "json" not in ct and not text.startswith("[") and not text.startswith("{"):
+            _log_non_json(url, resp)
             continue
         try:
             data = resp.json()
@@ -107,6 +159,57 @@ def try_grenadine_api():
         except Exception as e:
             print(f"JSON parse error for {url}: {e}", file=sys.stderr)
     return None
+
+
+def normalise_planz_item(raw):
+    """Normalise a PlanZ/Zambia KonOpas item to our schema.
+
+    PlanZ items use separate ``date`` (YYYY-MM-DD) and ``time`` (HH:MM)
+    fields instead of a combined ISO datetime, and ``mins`` for duration.
+    """
+    item_id = str(raw.get("id", ""))
+    title = raw.get("title", "")
+
+    date = raw.get("date", "")
+    time_str = raw.get("time", "")
+    mins = raw.get("mins", 0)
+
+    start_time = ""
+    end_time = ""
+    if date and time_str:
+        start_time = f"{date}T{time_str}:00"
+        try:
+            start_dt = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S")
+            end_dt = start_dt + timedelta(minutes=int(mins))
+            end_time = end_dt.strftime("%Y-%m-%dT%H:%M:%S")
+        except (ValueError, TypeError):
+            pass
+    elif raw.get("datetime"):
+        start_time = str(raw["datetime"])
+
+    loc = raw.get("loc", [])
+    location = loc[0] if isinstance(loc, list) and loc else str(raw.get("loc", ""))
+
+    desc_raw = raw.get("desc", "") or raw.get("description", "")
+    if "<" in str(desc_raw):
+        try:
+            description = BeautifulSoup(str(desc_raw), "lxml").get_text(separator=" ", strip=True)
+        except Exception:
+            description = re.sub(r"<[^>]+>", " ", str(desc_raw)).strip()
+    else:
+        description = str(desc_raw)
+
+    day = infer_day(start_time, date)
+
+    return {
+        "itemId": item_id,
+        "title": title,
+        "startTime": start_time,
+        "endTime": end_time,
+        "location": location,
+        "description": description,
+        "day": day,
+    }
 
 
 def normalise_grenadine_item(raw):
@@ -165,6 +268,7 @@ def try_json_api():
         ct = resp.headers.get("content-type", "")
         text = resp.text.strip()
         if "json" not in ct and not text.startswith("[") and not text.startswith("{"):
+            _log_non_json(url, resp)
             continue
         try:
             data = resp.json()
@@ -178,6 +282,160 @@ def try_json_api():
                         return data[key]
         except Exception as e:
             print(f"JSON parse error for {url}: {e}", file=sys.stderr)
+    return None
+
+
+def _parse_planz_response(text, url):
+    """Try to extract a programme list from a PlanZ/KonOpas response.
+
+    PlanZ can return data in three formats:
+      1. JSON array:    [{"id": …}, …]
+      2. JSON object:   {"program": […], "people": […]}
+      3. JS variables:  var program = […]; var people = […];
+    Returns the programme list, or None.
+    """
+    text = text.strip()
+
+    # Format 3: JS variable assignment
+    js_match = re.search(r'var\s+program\s*=\s*', text)
+    if js_match:
+        start = js_match.end()
+        if start < len(text) and text[start] in ("[", "{"):
+            data = _extract_json_value(text, start)
+            if isinstance(data, list) and len(data) > 0:
+                print(f"  Got {len(data)} items (JS var format) from {url}", file=sys.stderr)
+                return data
+
+    # Format 1 & 2: JSON
+    if not (text.startswith("[") or text.startswith("{")):
+        return None
+    try:
+        data = json.loads(text)
+        if isinstance(data, list) and len(data) > 0:
+            print(f"  Got {len(data)} items (JSON array) from {url}", file=sys.stderr)
+            return data
+        if isinstance(data, dict):
+            for key in ("program", "programme", "events", "items", "sessions"):
+                val = data.get(key)
+                if isinstance(val, list) and len(val) > 0:
+                    print(f"  Got {len(val)} items (JSON key={key}) from {url}", file=sys.stderr)
+                    return val
+    except (json.JSONDecodeError, ValueError):
+        pass
+    return None
+
+
+def try_planz_api():
+    """Try PlanZ/Zambia KonOpas export endpoint (used by Eastercon 2026)."""
+    candidates = [
+        f"{BASE_URL}/konOpas.php",
+        f"{BASE_URL}/webpages/konOpas.php",
+        f"{BASE_URL}/cap/program.js",
+        f"{BASE_URL}/data/program.js",
+        f"{BASE_URL}/program.js",
+    ]
+    for url in candidates:
+        print(f"Trying PlanZ endpoint: {url}", file=sys.stderr)
+        resp = fetch(url)
+        if resp is None:
+            continue
+        items = _parse_planz_response(resp.text, url)
+        if items:
+            return items
+    return None
+
+
+def try_js_bundle_config():
+    """Find programme data URL baked into the React/SPA JS bundle and fetch programme.
+
+    ConClár and similar React SPAs compile their config (including the data URL)
+    into the JS bundle.  We fetch the HTML, collect every JS file reference, search
+    each bundle for known variable names, then fetch the actual programme data.
+
+    Variable names tried (in order of likelihood):
+      PROGRAM_DATA_URL, REACT_APP_DATA_URL, PROGRAM_URL, DATA_URL,
+      programDataUrl, dataUrl, scheduleUrl, programUrl
+    """
+    resp = fetch(BASE_URL)
+    if resp is None:
+        return None
+
+    soup = BeautifulSoup(resp.text, "lxml")
+    print(f"Page title: {soup.title.get_text(strip=True) if soup.title else '(none)'}", file=sys.stderr)
+
+    # Collect candidate JS bundle URLs from <script src> and <link rel=modulepreload>
+    script_srcs = []
+    for script in soup.find_all("script", src=True):
+        src = script.get("src", "")
+        abs_src = urljoin(BASE_URL, src)
+        if urlparse(abs_src).netloc != urlparse(BASE_URL).netloc:
+            continue
+        if any(p in abs_src for p in ("static/js", "main.", "chunk.js", ".bundle.js", "app.", "index.")):
+            script_srcs.insert(0, abs_src)
+        else:
+            script_srcs.append(abs_src)
+    for link in soup.find_all("link", rel=True):
+        rel = link.get("rel", [])
+        if isinstance(rel, list):
+            rel = " ".join(rel)
+        if "modulepreload" in rel or "preload" in rel:
+            href = link.get("href", "")
+            if href.endswith(".js"):
+                abs_href = urljoin(BASE_URL, href)
+                if urlparse(abs_href).netloc == urlparse(BASE_URL).netloc:
+                    script_srcs.append(abs_href)
+
+    print(f"JS bundle candidates: {len(script_srcs)}", file=sys.stderr)
+    for s in script_srcs[:10]:
+        print(f"  {s}", file=sys.stderr)
+
+    # Also scan inline <script> blocks
+    all_scripts_text = " ".join(
+        s.get_text() for s in soup.find_all("script") if not s.get("src")
+    )
+
+    # Pattern: any of the known variable names followed by a URL value
+    data_url_re = re.compile(
+        r'(?:PROGRAM_DATA_URL|REACT_APP_DATA_URL|PROGRAM_URL|DATA_URL'
+        r'|programDataUrl|dataUrl|scheduleUrl|programUrl)'
+        r'["\']?\s*[:=]\s*["\']([^"\']{4,})["\']',
+        re.IGNORECASE,
+    )
+
+    def _find_and_fetch_data_url(js_text, source_label):
+        """Search js_text for a data URL and fetch it."""
+        match = data_url_re.search(js_text)
+        if not match:
+            return None
+        data_url = match.group(1)
+        if not data_url.startswith("http"):
+            data_url = urljoin(BASE_URL, data_url)
+        print(f"  Found data URL in {source_label}: {data_url}", file=sys.stderr)
+        data_resp = fetch(data_url)
+        if data_resp is None:
+            return None
+        return _parse_planz_response(data_resp.text, data_url)
+
+    # Try inline scripts first (cheap)
+    result = _find_and_fetch_data_url(all_scripts_text, "inline scripts")
+    if result:
+        return result
+
+    # Search JS bundles (up to 10 to be thorough)
+    for js_url in script_srcs[:10]:
+        print(f"Searching JS bundle: {js_url}", file=sys.stderr)
+        js_resp = fetch(js_url)
+        if js_resp is None:
+            continue
+        # Check for any of the known patterns before downloading fully
+        found = data_url_re.search(js_resp.text)
+        if not found:
+            print(f"  No data URL pattern found in bundle", file=sys.stderr)
+            continue
+        result = _find_and_fetch_data_url(js_resp.text, js_url)
+        if result:
+            return result
+
     return None
 
 
@@ -743,6 +1001,15 @@ def main():
         print(json.dumps(pdf_events, ensure_ascii=False, indent=2))
         return 0
 
+    # Try PlanZ/Zambia KonOpas endpoint (used by Eastercon 2026)
+    planz_data = try_planz_api()
+    if planz_data:
+        events = [normalise_planz_item(item) for item in planz_data]
+        events = [e for e in events if e["title"]]
+        if events:
+            print(json.dumps(events, ensure_ascii=False, indent=2))
+            return 0
+
     # Try Grenadine program.json API (used by convention guide sites)
     grenadine_data = try_grenadine_api()
     if grenadine_data:
@@ -756,6 +1023,15 @@ def main():
     json_data = try_json_api()
     if json_data:
         events = [normalise_json_item(item) for item in json_data]
+        events = [e for e in events if e["title"]]
+        if events:
+            print(json.dumps(events, ensure_ascii=False, indent=2))
+            return 0
+
+    # Try extracting PROGRAM_DATA_URL from the React JS bundle (ConClár support)
+    js_config_data = try_js_bundle_config()
+    if js_config_data:
+        events = [normalise_planz_item(item) for item in js_config_data]
         events = [e for e in events if e["title"]]
         if events:
             print(json.dumps(events, ensure_ascii=False, indent=2))

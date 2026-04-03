@@ -56,3 +56,15 @@ jobs:
           git add app/src/main/assets/programme.json
           git commit -m "Update programme data (${ITEM_COUNT} items) [skip ci]"
           git push
+
+      - name: Commit raw scraper responses
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scraper/raw/
+          if git diff --cached --quiet; then
+            echo "No new raw responses to commit"
+          else
+            git commit -m "Save raw scraper responses [skip ci]"
+            git push
+          fi

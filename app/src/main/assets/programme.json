@@ -1,164 +1,1559 @@
 [
   {
-    "itemId": "1001",
     "title": "Opening Ceremony",
     "startTime": "2026-04-03T14:00:00",
-    "endTime": "2026-04-03T15:00:00",
-    "location": "Balmoral",
-    "description": "Welcome to Iridescence \u2013 the 77th Eastercon! Join us as we officially open the convention with our Guests of Honour: R. J. Barker, Emma Newman, Karen Lord, and fan guests Serena Culfeather and John Wilson.",
-    "day": "Friday"
+    "endTime": "2026-04-03T14:30:00",
+    "location": "Sandringham",
+    "description": "Conventions, Ceremony, Guest of Honour, Committee, Fan interest, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1000"
   },
   {
-    "itemId": "1002",
+    "title": "The Ghost in the Machine, or Ectoplasmodiegesis! The Observant Ghost in Joanna Russ's The Female Man",
+    "startTime": "2026-04-03T15:00:00",
+    "endTime": "2026-04-03T16:00:00",
+    "location": "Balmoral",
+    "description": "Literature, Single Speaker/Lecture, Science Fiction, Literature, Feminism, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1001"
+  },
+  {
+    "title": "What’s hot in indie TTRPGs?",
+    "startTime": "2026-04-03T15:00:00",
+    "endTime": "2026-04-03T16:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Gaming, Panel, Tabletop Games & LARP, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1002"
+  },
+  {
+    "title": "Friday gaming",
+    "startTime": "2026-04-03T15:00:00",
+    "endTime": "2026-04-03T21:00:00",
+    "location": "London (Open)",
+    "description": "Gaming, Open Gaming, Tabletop Games & LARP, In-person only, No replay",
+    "day": "Friday",
+    "itemId": "1003"
+  },
+  {
     "title": "SFF and Trans History",
     "startTime": "2026-04-03T15:00:00",
     "endTime": "2026-04-03T16:00:00",
     "location": "Pavilion",
-    "description": "A discussion of the history of trans people and science fiction and fantasy, and how these genres have challenged contemporary ideas of gender through both creators and works. Panelists: Sandra Bond, Nick Hubble, Joel Cornah, duckbunny, and Cheryl Morgan.",
-    "day": "Friday"
+    "description": "Literature, Panel, Fandom History, LGBTQ+, Publishing, Film & TV, Literature, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1004"
   },
   {
-    "itemId": "1003",
-    "title": "Book Launch: Wizard's Tower Press",
+    "title": "Go and Tell the Bees",
+    "startTime": "2026-04-03T15:00:00",
+    "endTime": "2026-04-03T16:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Science, Panel, Fantasy, Science, Science Fiction, Fan interest, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1005"
+  },
+  {
+    "title": "SFF and the Age of Sail",
+    "startTime": "2026-04-03T15:00:00",
+    "endTime": "2026-04-03T16:00:00",
+    "location": "Sandringham",
+    "description": "Literature, Panel, Fantasy, Science Fiction, Worldbuilding, Literature, Reading, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1006"
+  },
+  {
+    "title": "Demystifying Publishing Contracts",
+    "startTime": "2026-04-03T15:00:00",
+    "endTime": "2026-04-03T16:00:00",
+    "location": "Sussex",
+    "description": "Writing, Workshop, Publishing, Writing, In-person only, No replay, Signup required",
+    "day": "Friday",
+    "itemId": "1007"
+  },
+  {
+    "title": "Stealing History for SFF",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T17:30:00",
+    "location": "Balmoral",
+    "description": "Writing, Panel, Fantasy, Guest of Honour, History, Writing, Literature, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1008"
+  },
+  {
+    "title": "New to Eastercon!",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T17:30:00",
+    "location": "Fan Lounge",
+    "description": "Conventions, Meeting, In-person only, No replay",
+    "day": "Friday",
+    "itemId": "1009"
+  },
+  {
+    "title": "Animals in SF and Fantasy",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T17:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Literature, Panel, Fantasy, Science Fiction, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1010"
+  },
+  {
+    "title": "When the Bough Breaks [Wildsea]",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T19:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Scheduled Game, Tabletop Games & LARP, In-person only, No replay, Signup required",
+    "day": "Friday",
+    "itemId": "1011"
+  },
+  {
+    "title": "Live Podcast: Starship Alexandria",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T17:30:00",
+    "location": "Pavilion",
+    "description": "Literature, Interview, Guest of Honour, Literature, Podcast, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1012"
+  },
+  {
+    "title": "Supernatural Comes of Age Film & TV, Panel, Fantasy, Film & TV, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T17:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "",
+    "day": "Friday",
+    "itemId": "1013"
+  },
+  {
+    "title": "The Politics of Hope: Imagining a Better World",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T17:30:00",
+    "location": "Sandringham",
+    "description": "Communities, Panel, Guest of Honour, Politics and Economics, Sustainability, Worldbuilding, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1014"
+  },
+  {
+    "title": "Book launch: Wizard's Tower Press",
     "startTime": "2026-04-03T16:30:00",
     "endTime": "2026-04-03T17:30:00",
     "location": "Sussex",
-    "description": "Wizard's Tower Press presents their latest titles. Join the authors for readings, discussion and book signing. Featuring Cheryl Morgan and Juliet E. McKenna.",
-    "day": "Friday"
+    "description": "Literature, Book Launch, In-person only, No replay",
+    "day": "Friday",
+    "itemId": "1015"
   },
   {
-    "itemId": "1004",
-    "title": "Obsidian Book Launch",
+    "title": "The Cottage Garden Conundrum: the Fantasy of Garden Recreation",
+    "startTime": "2026-04-03T18:00:00",
+    "endTime": "2026-04-03T19:00:00",
+    "location": "Balmoral",
+    "description": "Society, Single Speaker/Lecture, History, Art, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1016"
+  },
+  {
+    "title": "Breaking News from Gondor",
+    "startTime": "2026-04-03T18:00:00",
+    "endTime": "2026-04-03T19:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Literature, Panel, Fantasy, Science Fiction, Worldbuilding, Film & TV, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1017"
+  },
+  {
+    "title": "Newcon book launch",
+    "startTime": "2026-04-03T18:00:00",
+    "endTime": "2026-04-03T19:00:00",
+    "location": "Pavilion",
+    "description": "Autographing, Book Launch, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1018"
+  },
+  {
+    "title": "Reviewing as a Conversation",
+    "startTime": "2026-04-03T18:00:00",
+    "endTime": "2026-04-03T19:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Literature, Panel, Writing, Literature, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1019"
+  },
+  {
+    "title": "\"Can We Talk About Bruno? Prophets and Prophecy in SFF\"",
+    "startTime": "2026-04-03T18:00:00",
+    "endTime": "2026-04-03T19:00:00",
+    "location": "Sandringham",
+    "description": "Media, Panel, Craft of Writing, Fantasy, Horror, Performing Arts, Romance, Science Fiction, Worldbuilding, Writing, Literature, Reading, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1020"
+  },
+  {
+    "title": "Fantasy Book Club: The Bone Ships by RJ Barker",
+    "startTime": "2026-04-03T18:00:00",
+    "endTime": "2026-04-03T19:00:00",
+    "location": "Sussex",
+    "description": "Literature, Meet Up, Fantasy, Reading, In-person only, No replay",
+    "day": "Friday",
+    "itemId": "1021"
+  },
+  {
+    "title": "Inadvisable Experiments in Transportation",
+    "startTime": "2026-04-03T19:30:00",
+    "endTime": "2026-04-03T20:30:00",
+    "location": "Balmoral",
+    "description": "Science, Single Speaker/Lecture, History, Politics and Economics, Science, Fan interest, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1022"
+  },
+  {
+    "title": "SF and Fantasy in the West Midlands",
+    "startTime": "2026-04-03T19:30:00",
+    "endTime": "2026-04-03T20:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Literature, Panel, Fantasy, Science Fiction, Writing, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1023"
+  },
+  {
+    "title": "The Tattoo Job [Blades in the Dark]",
+    "startTime": "2026-04-03T19:30:00",
+    "endTime": "2026-04-03T22:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Scheduled Game, Tabletop Games & LARP, In-person only, No replay, Signup required",
+    "day": "Friday",
+    "itemId": "1024"
+  },
+  {
+    "title": "Lucky for None played LIVE!",
+    "startTime": "2026-04-03T19:30:00",
+    "endTime": "2026-04-03T20:30:00",
+    "location": "Pavilion",
+    "description": "Gaming, Panel, Tabletop Games & LARP, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1025"
+  },
+  {
+    "title": "Near Future Fails",
+    "startTime": "2026-04-03T19:30:00",
+    "endTime": "2026-04-03T20:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "Writing, Panel, Politics and Economics, Science, Writing, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1026"
+  },
+  {
+    "title": "Speculative Fiction in Translation: challenges and solutions",
+    "startTime": "2026-04-03T19:30:00",
+    "endTime": "2026-04-03T20:30:00",
+    "location": "Sandringham",
+    "description": "Literature, Panel, Craft of Writing, Fantasy, Publishing, Science Fiction, Writing, Literature, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1027"
+  },
+  {
+    "title": "Book launch: Guardbridge Books and Slab Press",
     "startTime": "2026-04-03T19:30:00",
     "endTime": "2026-04-03T20:30:00",
     "location": "Sussex",
-    "description": "Join us for the launch of Obsidian, with readings and refreshments.",
-    "day": "Friday"
+    "description": "Literature, Book Launch, In-person only, No replay",
+    "day": "Friday",
+    "itemId": "1028"
   },
   {
-    "itemId": "2001",
+    "title": "So I Lied to You: Sinners film discussion",
+    "startTime": "2026-04-03T21:00:00",
+    "endTime": "2026-04-03T22:00:00",
+    "location": "Balmoral",
+    "description": "Media, Panel, BIPOC, Horror, Performing Arts, Film & TV, Legends & Folklore, Music, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1029"
+  },
+  {
+    "title": "Games with Funcon 2: Better than a thousand angry wasps Fan Interest, Participatory Event, In-person only, No replay",
+    "startTime": "2026-04-03T21:00:00",
+    "endTime": "2026-04-03T22:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "",
+    "day": "Friday",
+    "itemId": "1030"
+  },
+  {
+    "title": "Karaoke for all",
+    "startTime": "2026-04-03T21:00:00",
+    "endTime": "2026-04-03T23:00:00",
+    "location": "Pavilion",
+    "description": "Music, Participatory Event, In-person only, No replay",
+    "day": "Friday",
+    "itemId": "1031"
+  },
+  {
+    "title": "Poetry Open Mic",
+    "startTime": "2026-04-03T21:00:00",
+    "endTime": "2026-04-03T22:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Literature, Other, Poetry, Streamed, Replay, Signup required, type:Streaming",
+    "day": "Friday",
+    "itemId": "1032"
+  },
+  {
+    "title": "Everything I know about life, I learned from reading....",
+    "startTime": "2026-04-03T21:00:00",
+    "endTime": "2026-04-03T22:00:00",
+    "location": "Sandringham",
+    "description": "Literature, Panel, Fantasy, Science Fiction, Literature, YA, Reading, Streamed, Replay, type:Streaming",
+    "day": "Friday",
+    "itemId": "1033"
+  },
+  {
+    "title": "Friday Filk",
+    "startTime": "2026-04-03T21:00:00",
+    "endTime": "2026-04-03T23:30:00",
+    "location": "Sussex",
+    "description": "Music, Participatory Event, In-person only, No replay",
+    "day": "Friday",
+    "itemId": "1034"
+  },
+  {
+    "title": "ParkRun meetup",
+    "startTime": "2026-04-04T08:00:00",
+    "endTime": "2026-04-04T10:30:00",
+    "location": "Other",
+    "description": "Exercise, Other, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1035"
+  },
+  {
+    "title": "Industrial Landscapes in SF and Fantasy",
+    "startTime": "2026-04-04T09:00:00",
+    "endTime": "2026-04-04T10:00:00",
+    "location": "Balmoral",
+    "description": "Literature, Panel, Fantasy, History, Science, Science Fiction, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1036"
+  },
+  {
+    "title": "Feedback Session",
+    "startTime": "2026-04-04T09:00:00",
+    "endTime": "2026-04-04T10:00:00",
+    "location": "Fan Lounge",
+    "description": "ConCom, Panel, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1037"
+  },
+  {
+    "title": "Paths to Publishing",
+    "startTime": "2026-04-04T09:00:00",
+    "endTime": "2026-04-04T10:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Writing, Panel, Publishing, Writing, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1038"
+  },
+  {
+    "title": "Fanzines in the 21st century Fan Interest, Panel, Fandom History, Fanfic & transformative works, Fan interest, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-04T09:00:00",
+    "endTime": "2026-04-04T10:00:00",
+    "location": "Pavilion",
+    "description": "",
+    "day": "Saturday",
+    "itemId": "1039"
+  },
+  {
+    "title": "Author readings I",
+    "startTime": "2026-04-04T09:00:00",
+    "endTime": "2026-04-04T10:15:00",
+    "location": "Salisbury-Wellington",
+    "description": "Literature, Reading, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1040"
+  },
+  {
     "title": "Considering Anne McCaffrey",
     "startTime": "2026-04-04T09:00:00",
     "endTime": "2026-04-04T10:00:00",
     "location": "Sandringham",
-    "description": "A panel looking back at the works and legacy of Anne McCaffrey, her contributions to science fiction and fantasy, and what her Pern and other series mean to readers today. Featuring Juliet E. McKenna.",
-    "day": "Saturday"
+    "description": "Literature, Panel, Science Fiction, Feminism, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1041"
   },
   {
-    "itemId": "2002",
-    "title": "Fanzines in the 21st Century",
-    "startTime": "2026-04-04T09:00:00",
-    "endTime": "2026-04-04T10:00:00",
+    "title": "Saturday gaming",
+    "startTime": "2026-04-04T10:00:00",
+    "endTime": "2026-04-04T21:00:00",
+    "location": "London (Open)",
+    "description": "Gaming, Open Gaming, Tabletop Games & LARP, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1042"
+  },
+  {
+    "title": "The BSFA Lecture: From Reel to Real - Film Locations Beyond the Screen",
+    "startTime": "2026-04-04T10:30:00",
+    "endTime": "2026-04-04T11:30:00",
+    "location": "Balmoral",
+    "description": "BSFA, Single Speaker/Lecture, BSFA, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1043"
+  },
+  {
+    "title": "How to Run an Art Show",
+    "startTime": "2026-04-04T10:30:00",
+    "endTime": "2026-04-04T11:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Art, Panel, Conventions, Guest of Honour, Art, Fan interest, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1044"
+  },
+  {
+    "title": "Get Me the Anderson Contract [MÖRK ORG]",
+    "startTime": "2026-04-04T10:30:00",
+    "endTime": "2026-04-04T13:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Scheduled Game, Tabletop Games & LARP, In-person only, No replay, Signup required",
+    "day": "Saturday",
+    "itemId": "1045"
+  },
+  {
+    "title": "Urban Sketching meetup",
+    "startTime": "2026-04-04T10:30:00",
+    "endTime": "2026-04-04T12:30:00",
+    "location": "Other",
+    "description": "Art, Meeting, Art, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1046"
+  },
+  {
+    "title": "Andor, fascism and resistance Film & TV, Panel, Science Fiction, Film & TV, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-04T10:30:00",
+    "endTime": "2026-04-04T11:30:00",
     "location": "Pavilion",
-    "description": "Exploring the creation, sharing, and enduring appeal of fanzines in the age of microblogging and BookTok. How are fanzines made and what challenges do they face today? Panelists: Alison Scott, Roseanna Pendlebury, Sandra Bond, Tommy Ferguson, and Cheryl Morgan.",
-    "day": "Saturday"
+    "description": "",
+    "day": "Saturday",
+    "itemId": "1047"
   },
   {
-    "itemId": "2003",
-    "title": "Appropriation of Greek Culture in the Anglophone World, and How to Reclaim It",
+    "title": "Author Readings II",
+    "startTime": "2026-04-04T10:30:00",
+    "endTime": "2026-04-04T11:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "Reading, Reading, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1048"
+  },
+  {
+    "title": "Writers Workshops and Critique Groups",
+    "startTime": "2026-04-04T10:30:00",
+    "endTime": "2026-04-04T11:30:00",
+    "location": "Sandringham",
+    "description": "Writing, Panel, Craft of Writing, Writing, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1049"
+  },
+  {
+    "title": "The Joys and Pains of Audiobooks",
+    "startTime": "2026-04-04T12:00:00",
+    "endTime": "2026-04-04T13:00:00",
+    "location": "Balmoral",
+    "description": "Literature, Panel, Guest of Honour, Writing, Literature, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1050"
+  },
+  {
+    "title": "Neurodivergence, own voices and portrayals",
+    "startTime": "2026-04-04T12:00:00",
+    "endTime": "2026-04-04T13:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Communities, Panel, Craft of Writing, Politics and Economics, Worldbuilding, Writing, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1051"
+  },
+  {
+    "title": "Food and sustainability",
+    "startTime": "2026-04-04T12:00:00",
+    "endTime": "2026-04-04T13:00:00",
+    "location": "Pavilion",
+    "description": "Society, Panel, Politics and Economics, Sustainability, Fan interest, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1052"
+  },
+  {
+    "title": "World building for thousands - what LARP tells us about storytelling, agency and romance",
+    "startTime": "2026-04-04T12:00:00",
+    "endTime": "2026-04-04T13:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Gaming, Single Speaker/Lecture, Tabletop Games & LARP, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1053"
+  },
+  {
+    "title": "Karen Lord: Guest of Honour interview",
+    "startTime": "2026-04-04T12:00:00",
+    "endTime": "2026-04-04T13:00:00",
+    "location": "Sandringham",
+    "description": "GOH, Interview, Guest of Honour, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1054"
+  },
+  {
+    "title": "Begin to knit! Fan Interest, Workshop, Maker-Crafting, In-person only, No replay, Signup required",
+    "startTime": "2026-04-04T12:00:00",
+    "endTime": "2026-04-04T13:00:00",
+    "location": "Sussex",
+    "description": "",
+    "day": "Saturday",
+    "itemId": "1055"
+  },
+  {
+    "title": "Fantasy Bookswap Live Podcast",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T14:30:00",
+    "location": "Balmoral",
+    "description": "Reading, Other, Children's Literature, YA, Reading, Podcast, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1056"
+  },
+  {
+    "title": "Fountain Pen Meet Up",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T14:30:00",
+    "location": "Fan Lounge",
+    "description": "Art, Meet Up, Art, Meet Up, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1057"
+  },
+  {
+    "title": "Changing Climate, Changing Stories",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T14:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Society, Panel, Politics and Economics, Science, Science Fiction, Sustainability, Worldbuilding, Writing, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1058"
+  },
+  {
+    "title": "The Curse of the Witch Queen [Dungeons & Dragons 5e]",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T16:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Scheduled Game, Tabletop Games & LARP, In-person only, No replay, Signup required",
+    "day": "Saturday",
+    "itemId": "1059"
+  },
+  {
+    "title": "Robot Overlords",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T14:30:00",
+    "location": "Pavilion",
+    "description": "Science, Panel, Politics and Economics, Science, Science Fiction, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1060"
+  },
+  {
+    "title": "Appropriation of Greek Culture in the Anglophone world, and how to reclaim it",
     "startTime": "2026-04-04T13:30:00",
     "endTime": "2026-04-04T14:30:00",
     "location": "Salisbury-Wellington",
-    "description": "An exploration of how Greek myths, philosophy and culture have been adopted and adapted in the English-speaking world, and what it means to reclaim these narratives. Featuring Juliet E. McKenna.",
-    "day": "Saturday"
+    "description": "Literature, Panel, History, Literature, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1061"
   },
   {
-    "itemId": "2004",
+    "title": "RJ Barker: Guest of Honour interview",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T14:30:00",
+    "location": "Sandringham",
+    "description": "GOH, Interview, Guest of Honour, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1062"
+  },
+  {
+    "title": "Build a World Workshop",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T14:30:00",
+    "location": "Sussex",
+    "description": "Writing, Workshop, Writing, In-person only, No replay, Signup required",
+    "day": "Saturday",
+    "itemId": "1063"
+  },
+  {
+    "title": "How to Survive in a Cartoon Universe",
+    "startTime": "2026-04-04T15:00:00",
+    "endTime": "2026-04-04T16:00:00",
+    "location": "Balmoral",
+    "description": "Science, Single Speaker/Lecture, Science, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1064"
+  },
+  {
+    "title": "The Enduring Appeal of E Nesbit - Meet up.",
+    "startTime": "2026-04-04T15:00:00",
+    "endTime": "2026-04-04T16:00:00",
+    "location": "Fan Lounge",
+    "description": "Literature, Meeting, Literature, Children's Literature, Reading, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1065"
+  },
+  {
+    "title": "Digging the Future",
+    "startTime": "2026-04-04T15:00:00",
+    "endTime": "2026-04-04T16:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Literature, Panel, Fantasy, History, Politics and Economics, Science Fiction, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1066"
+  },
+  {
+    "title": "The Centenarian Recycler Ship Captain",
+    "startTime": "2026-04-04T15:00:00",
+    "endTime": "2026-04-04T16:00:00",
+    "location": "Pavilion",
+    "description": "Literature, Panel, Fantasy, Science Fiction, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1067"
+  },
+  {
     "title": "Introduction to Fantasy Kingdoms",
     "startTime": "2026-04-04T15:00:00",
     "endTime": "2026-04-04T16:00:00",
     "location": "Salisbury-Wellington",
-    "description": "A beginner-friendly panel about building and exploring fantasy kingdoms in fiction. How do authors create convincing secondary world polities? Featuring Juliet E. McKenna.",
-    "day": "Saturday"
+    "description": "Literature, Panel, Fantasy, History, Politics and Economics, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1068"
   },
   {
-    "itemId": "2005",
-    "title": "My Flesh is False \u2013 SF Poetry Show",
+    "title": "Neurodivergent Strategies for Overcoming Writer's Block",
+    "startTime": "2026-04-04T15:00:00",
+    "endTime": "2026-04-04T16:00:00",
+    "location": "Sussex",
+    "description": "Writing, Workshop, Craft of Writing, Writing, In-person only, No replay, Signup required",
+    "day": "Saturday",
+    "itemId": "1069"
+  },
+  {
+    "title": "The Wrong Side of the Law",
+    "startTime": "2026-04-04T16:30:00",
+    "endTime": "2026-04-04T17:30:00",
+    "location": "Balmoral",
+    "description": "Literature, Panel, Fantasy, Science Fiction, Worldbuilding, Film & TV, Literature, Legends & Folklore, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1070"
+  },
+  {
+    "title": "Book group: The Galaxy Game",
+    "startTime": "2026-04-04T16:30:00",
+    "endTime": "2026-04-04T17:30:00",
+    "location": "Fan Lounge",
+    "description": "Literature, Meeting, Guest of Honour, Reading, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1071"
+  },
+  {
+    "title": "Let's not fight",
+    "startTime": "2026-04-04T16:30:00",
+    "endTime": "2026-04-04T17:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Literature, Panel, Politics and Economics, Worldbuilding, Writing, Literature, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1072"
+  },
+  {
+    "title": "Shipwrecked on Shank Island [PIRATE BORG]",
+    "startTime": "2026-04-04T16:30:00",
+    "endTime": "2026-04-04T19:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Scheduled Game, Tabletop Games & LARP, In-person only, No replay, Signup required",
+    "day": "Saturday",
+    "itemId": "1073"
+  },
+  {
+    "title": "Everything you want to know about LARP but were too afraid to ask",
+    "startTime": "2026-04-04T16:30:00",
+    "endTime": "2026-04-04T17:30:00",
+    "location": "Pavilion",
+    "description": "Gaming, Panel, Guest of Honour, Tabletop Games & LARP, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1074"
+  },
+  {
+    "title": "Effective Cover Design",
+    "startTime": "2026-04-04T16:30:00",
+    "endTime": "2026-04-04T17:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "Art, Panel, Art, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1075"
+  },
+  {
+    "title": "Cosmic Circus",
+    "startTime": "2026-04-04T16:30:00",
+    "endTime": "2026-04-04T17:30:00",
+    "location": "Sandringham",
+    "description": "Science, Performance, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1076"
+  },
+  {
+    "title": "Book launch: Elsewhen Press",
+    "startTime": "2026-04-04T16:30:00",
+    "endTime": "2026-04-04T17:30:00",
+    "location": "Sussex",
+    "description": "Literature, Book Launch, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1077"
+  },
+  {
+    "title": "Hauntology",
+    "startTime": "2026-04-04T18:00:00",
+    "endTime": "2026-04-04T19:00:00",
+    "location": "Balmoral",
+    "description": "Literature, Panel, Fantasy, Horror, Literature, Legends & Folklore, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1078"
+  },
+  {
+    "title": "Playing in the apocalypse",
+    "startTime": "2026-04-04T18:00:00",
+    "endTime": "2026-04-04T19:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Gaming, Panel, Horror, Science Fiction, Tabletop Games & LARP, Video Games, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1079"
+  },
+  {
+    "title": "We Will Rise Again",
+    "startTime": "2026-04-04T18:00:00",
+    "endTime": "2026-04-04T19:00:00",
+    "location": "Pavilion",
+    "description": "Society, Panel, Craft of Writing, Guest of Honour, Politics and Economics, Science Fiction, Writing, Literature, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1080"
+  },
+  {
+    "title": "Bisexuality and boundary crossing -- liminal sexualities and genres",
+    "startTime": "2026-04-04T18:00:00",
+    "endTime": "2026-04-04T19:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Society, Panel, LGBTQ+, Worldbuilding, Writing, Film & TV, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1081"
+  },
+  {
+    "title": "Luna Press book launch",
+    "startTime": "2026-04-04T18:00:00",
+    "endTime": "2026-04-04T19:00:00",
+    "location": "Sussex",
+    "description": "Autographing, Book Launch, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1082"
+  },
+  {
+    "title": "Don't Get it Twisted: Black Hair 101",
+    "startTime": "2026-04-04T19:30:00",
+    "endTime": "2026-04-04T20:30:00",
+    "location": "Balmoral",
+    "description": "Society, Single Speaker/Lecture, BIPOC, History, Writing, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1083"
+  },
+  {
+    "title": "Stop, collaborate and listen (to us talking about co-operative games)",
+    "startTime": "2026-04-04T19:30:00",
+    "endTime": "2026-04-04T20:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Gaming, Panel, Tabletop Games & LARP, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1084"
+  },
+  {
+    "title": "Workshops: Superheroes, Microfictions, and Erasure Poetry",
+    "startTime": "2026-04-04T19:30:00",
+    "endTime": "2026-04-04T20:30:00",
+    "location": "Pavilion",
+    "description": "Writing, Workshop, Maker-Crafting, Poetry, Science Fiction, Worldbuilding, Writing, In-person only, No replay, Signup required",
+    "day": "Saturday",
+    "itemId": "1085"
+  },
+  {
+    "title": "Fan Funds Auction Fan Interest, Other, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-04T19:30:00",
+    "endTime": "2026-04-04T20:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "",
+    "day": "Saturday",
+    "itemId": "1086"
+  },
+  {
+    "title": "My Flesh is False",
     "startTime": "2026-04-04T19:30:00",
     "endTime": "2026-04-04T20:30:00",
     "location": "Sandringham",
-    "description": "Andrew Wallace presents sci-fi poetry from his new collection 'A.D.H.DAYS'. A live performance exploring science fiction themes through verse.",
-    "day": "Saturday"
+    "description": "Theater, Drama, Performing Arts, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1087"
   },
   {
-    "itemId": "2006",
-    "title": "Disco",
+    "title": "How to get a Literary Agent",
+    "startTime": "2026-04-04T19:30:00",
+    "endTime": "2026-04-04T20:30:00",
+    "location": "Sussex",
+    "description": "Writing, Workshop, Publishing, Writing, In-person only, No replay, Signup required",
+    "day": "Saturday",
+    "itemId": "1088"
+  },
+  {
+    "title": "Film Screening: Voidance Film & TV, Other, Science Fiction, Film & TV, In-person only, No replay",
     "startTime": "2026-04-04T21:00:00",
-    "endTime": "2026-04-04T23:59:00",
+    "endTime": "2026-04-04T23:30:00",
     "location": "Balmoral",
-    "description": "The Saturday night disco, a beloved Eastercon tradition. DJ set by Mike Brooks.",
-    "day": "Saturday"
+    "description": "",
+    "day": "Saturday",
+    "itemId": "1089"
   },
   {
-    "itemId": "3001",
-    "title": "Author Reading: Scott Edelman, Emily Tesh and Wole Talabi",
+    "title": "People with cats Fan Interest, Participatory Event, Amusement, Fan interest, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-04T21:00:00",
+    "endTime": "2026-04-04T22:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "",
+    "day": "Saturday",
+    "itemId": "1090"
+  },
+  {
+    "title": "DISCO!!!!!",
+    "startTime": "2026-04-04T21:00:00",
+    "endTime": "2026-04-04T23:15:00",
+    "location": "Pavilion",
+    "description": "Music, Other, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1091"
+  },
+  {
+    "title": "Creating Haunted, Cursed and Possessed Items",
+    "startTime": "2026-04-04T21:00:00",
+    "endTime": "2026-04-04T22:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Writing, Workshop, Craft of Writing, Writing, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1092"
+  },
+  {
+    "title": "Two New Dramatic Presentations: Deity of the Day and The Enemy Within",
+    "startTime": "2026-04-04T21:00:00",
+    "endTime": "2026-04-04T22:30:00",
+    "location": "Sandringham",
+    "description": "Theater, Panel, Streamed, Replay, type:Streaming",
+    "day": "Saturday",
+    "itemId": "1093"
+  },
+  {
+    "title": "Saturday Filk",
+    "startTime": "2026-04-04T21:00:00",
+    "endTime": "2026-04-04T23:30:00",
+    "location": "Sussex",
+    "description": "Music, Participatory Event, In-person only, No replay",
+    "day": "Saturday",
+    "itemId": "1094"
+  },
+  {
+    "title": "Author readings IV",
     "startTime": "2026-04-05T09:00:00",
     "endTime": "2026-04-05T10:00:00",
     "location": "Balmoral",
-    "description": "Readings from Scott Edelman, Emily Tesh and Wole Talabi. Come hear excerpts from their latest and forthcoming works.",
-    "day": "Sunday"
+    "description": "Literature, Reading, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1095"
   },
   {
-    "itemId": "3002",
+    "title": "Feedback Session",
+    "startTime": "2026-04-05T09:00:00",
+    "endTime": "2026-04-05T10:00:00",
+    "location": "Fan Lounge",
+    "description": "Conventions, Panel, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1096"
+  },
+  {
+    "title": "Short Talks from Younger Members",
+    "startTime": "2026-04-05T09:00:00",
+    "endTime": "2026-04-05T10:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Teen, Single Speaker/Lecture, YA, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1097"
+  },
+  {
+    "title": "Future Worldcons: Q&A with bids",
+    "startTime": "2026-04-05T09:00:00",
+    "endTime": "2026-04-05T10:00:00",
+    "location": "Pavilion",
+    "description": "Conventions, Panel, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1098"
+  },
+  {
+    "title": "Morning Service for Easter",
+    "startTime": "2026-04-05T09:00:00",
+    "endTime": "2026-04-05T10:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Communities, Meeting, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1099"
+  },
+  {
+    "title": "Sunday gaming",
+    "startTime": "2026-04-05T10:00:00",
+    "endTime": "2026-04-05T21:00:00",
+    "location": "London (Open)",
+    "description": "Gaming, Open Gaming, Tabletop Games & LARP, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1100"
+  },
+  {
+    "title": "How Great are Libraries?",
+    "startTime": "2026-04-05T10:30:00",
+    "endTime": "2026-04-05T11:30:00",
+    "location": "Balmoral",
+    "description": "Literature, Panel, Fantasy, History, Politics and Economics, Science Fiction, Literature, Reading, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1101"
+  },
+  {
+    "title": "Table Talk with Emma Newman",
+    "startTime": "2026-04-05T10:30:00",
+    "endTime": "2026-04-05T11:30:00",
+    "location": "Fan Lounge",
+    "description": "GOH, Table Talk, In-person only, No replay, Signup required",
+    "day": "Sunday",
+    "itemId": "1102"
+  },
+  {
     "title": "Why Writing and Making Tactile Art is Revolutionary",
     "startTime": "2026-04-05T10:30:00",
     "endTime": "2026-04-05T11:30:00",
     "location": "Gladstone-Churchill",
-    "description": "A discussion on the importance of tactile, hands-on creativity in a digital age \u2014 why writing by hand and making physical art still matters. Panelists: Scott Edelman, Tiffani Angus, Aliette de Bodard, Nikita Andester, and Penny Hill.",
-    "day": "Sunday"
+    "description": "Society, Panel, Politics and Economics, Writing, Art, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1103"
   },
   {
-    "itemId": "3003",
+    "title": "Belly of the Beast [Mothership]",
+    "startTime": "2026-04-05T10:30:00",
+    "endTime": "2026-04-05T13:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Scheduled Game, Horror, Science Fiction, Tabletop Games & LARP, In-person only, No replay, Signup required",
+    "day": "Sunday",
+    "itemId": "1104"
+  },
+  {
+    "title": "Space operas",
+    "startTime": "2026-04-05T10:30:00",
+    "endTime": "2026-04-05T11:30:00",
+    "location": "Pavilion",
+    "description": "Literature, Panel, Science Fiction, Worldbuilding, Film & TV, Literature, Reading, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1105"
+  },
+  {
+    "title": "The Space Merchants: Interstellar Trade for Fun and Profit",
+    "startTime": "2026-04-05T10:30:00",
+    "endTime": "2026-04-05T11:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "Society, Single Speaker/Lecture, Fantasy, Politics and Economics, Science Fiction, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1106"
+  },
+  {
+    "title": "Eastercon Bid Session",
+    "startTime": "2026-04-05T10:30:00",
+    "endTime": "2026-04-05T11:30:00",
+    "location": "Sandringham",
+    "description": "Conventions, Ceremony, Conventions, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1107"
+  },
+  {
+    "title": "How to Crochet a Dragon",
+    "startTime": "2026-04-05T10:30:00",
+    "endTime": "2026-04-05T11:30:00",
+    "location": "Sussex",
+    "description": "Maker, Workshop, Maker-Crafting, In-person only, No replay, Signup required",
+    "day": "Sunday",
+    "itemId": "1108"
+  },
+  {
+    "title": "Bureaucracy and Human Resources in SFF",
+    "startTime": "2026-04-05T12:00:00",
+    "endTime": "2026-04-05T13:00:00",
+    "location": "Balmoral",
+    "description": "Society, Panel, Fantasy, History, Science Fiction, Worldbuilding, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1109"
+  },
+  {
+    "title": "Agatha All Along Film & TV, Panel, Fantasy, Romance, Film & TV, Feminism, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-05T12:00:00",
+    "endTime": "2026-04-05T13:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "",
+    "day": "Sunday",
+    "itemId": "1110"
+  },
+  {
+    "title": "Languages and Multilingualism",
+    "startTime": "2026-04-05T12:00:00",
+    "endTime": "2026-04-05T13:00:00",
+    "location": "Pavilion",
+    "description": "Writing, Panel, BIPOC, Craft of Writing, Worldbuilding, Writing, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1111"
+  },
+  {
+    "title": "Fantasy Map Design and Place Names",
+    "startTime": "2026-04-05T12:00:00",
+    "endTime": "2026-04-05T13:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Art, Panel, Guest of Honour, Worldbuilding, Art, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1112"
+  },
+  {
+    "title": "Emma Newman: Guest of Honour interview",
+    "startTime": "2026-04-05T12:00:00",
+    "endTime": "2026-04-05T13:00:00",
+    "location": "Sandringham",
+    "description": "GOH, Interview, Guest of Honour, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1113"
+  },
+  {
+    "title": "Spinning with a Drop Spindle",
+    "startTime": "2026-04-05T12:00:00",
+    "endTime": "2026-04-05T13:00:00",
+    "location": "Sussex",
+    "description": "Maker, Workshop, Maker-Crafting, In-person only, No replay, Signup required",
+    "day": "Sunday",
+    "itemId": "1114"
+  },
+  {
+    "title": "The Hay Lecture: Stranger than Fiction - Creatures of the Deep",
+    "startTime": "2026-04-05T13:30:00",
+    "endTime": "2026-04-05T14:30:00",
+    "location": "Balmoral",
+    "description": "Science, Single Speaker/Lecture, Science, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1115"
+  },
+  {
+    "title": "Table Talk with RJ Barker",
+    "startTime": "2026-04-05T13:30:00",
+    "endTime": "2026-04-05T14:30:00",
+    "location": "Fan Lounge",
+    "description": "GOH, Table Talk, In-person only, No replay, Signup required",
+    "day": "Sunday",
+    "itemId": "1116"
+  },
+  {
+    "title": "Comic and Book Retailing",
+    "startTime": "2026-04-05T13:30:00",
+    "endTime": "2026-04-05T14:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Writing, Panel, Publishing, Writing, Comics, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1117"
+  },
+  {
+    "title": "The Maze of Mad Malkas [Dungeons & Dragons 5e]",
+    "startTime": "2026-04-05T13:30:00",
+    "endTime": "2026-04-05T15:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Scheduled Game, Tabletop Games & LARP, In-person only, No replay, Signup required",
+    "day": "Sunday",
+    "itemId": "1118"
+  },
+  {
+    "title": "Writing SFF From Elsewhere: Global Voices in a Western Market",
+    "startTime": "2026-04-05T13:30:00",
+    "endTime": "2026-04-05T14:30:00",
+    "location": "Pavilion",
+    "description": "Writing, Panel, Fantasy, Science Fiction, Writing, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1119"
+  },
+  {
     "title": "Writing about Darkness in an Ever Darkening World",
     "startTime": "2026-04-05T13:30:00",
     "endTime": "2026-04-05T14:30:00",
     "location": "Salisbury-Wellington",
-    "description": "How do authors write dark fiction when the real world keeps getting darker? A panel on the responsibilities and freedoms of writing about difficult themes. Panelists: Scott Edelman, David Ketelby, Emily Inkpen, Justin Lee Anderson, and Anna Smith Spark.",
-    "day": "Sunday"
+    "description": "Writing, Panel, Politics and Economics, Writing, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1120"
   },
   {
-    "itemId": "3004",
-    "title": "BSFA Awards Ceremony",
-    "startTime": "2026-04-05T19:00:00",
-    "endTime": "2026-04-05T21:00:00",
+    "title": "Imagining Ourselves Out from the Dystopian Present",
+    "startTime": "2026-04-05T13:30:00",
+    "endTime": "2026-04-05T14:30:00",
+    "location": "Sandringham",
+    "description": "Society, Panel, Fantasy, History, Horror, Science Fiction, Worldbuilding, Writing, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1121"
+  },
+  {
+    "title": "Flame Tree Press launch Allen Stroud's new book!",
+    "startTime": "2026-04-05T13:30:00",
+    "endTime": "2026-04-05T14:30:00",
+    "location": "Sussex",
+    "description": "Literature, Book Launch, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1122"
+  },
+  {
+    "title": "Folklore as Resistance",
+    "startTime": "2026-04-05T15:00:00",
+    "endTime": "2026-04-05T16:00:00",
     "location": "Balmoral",
-    "description": "The presentation of the British Science Fiction Association Awards for the best works published in 2025. Categories include Best Novel, Best Shorter Fiction, Best Artwork, Best Non-Fiction and Best Audio Fiction. Hosted by Stewart Hotston.",
-    "day": "Sunday"
+    "description": "Literature, Panel, Fantasy, Horror, Writing, Legends & Folklore, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1123"
   },
   {
-    "itemId": "4001",
-    "title": "Author Reading III: Aliette de Bodard, Robin CM Duncan and Juliet E. McKenna",
+    "title": "How it's done: K-Pop Demon Hunters Film & TV, Meet Up, BIPOC, Fantasy, Film & TV, YA, Music, In-person only, No replay",
+    "startTime": "2026-04-05T15:00:00",
+    "endTime": "2026-04-05T16:00:00",
+    "location": "Fan Lounge",
+    "description": "",
+    "day": "Sunday",
+    "itemId": "1124"
+  },
+  {
+    "title": "Survive. Solve. Save. Pick one",
+    "startTime": "2026-04-05T15:00:00",
+    "endTime": "2026-04-05T16:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Gaming, Panel, Horror, Science Fiction, Tabletop Games & LARP, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1125"
+  },
+  {
+    "title": "Tourism of the Imagination",
+    "startTime": "2026-04-05T15:00:00",
+    "endTime": "2026-04-05T16:00:00",
+    "location": "Pavilion",
+    "description": "Literature, Panel, History, Literature, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1126"
+  },
+  {
+    "title": "Class and the Future",
+    "startTime": "2026-04-05T15:00:00",
+    "endTime": "2026-04-05T16:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Society, Panel, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1127"
+  },
+  {
+    "title": "Serena Culfeather and John Wilson: Guest of Honour Interview",
+    "startTime": "2026-04-05T15:00:00",
+    "endTime": "2026-04-05T16:00:00",
+    "location": "Sandringham",
+    "description": "GOH, Interview, Guest of Honour, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1128"
+  },
+  {
+    "title": "New Milford Anthology: Hidden Shadows",
+    "startTime": "2026-04-05T15:00:00",
+    "endTime": "2026-04-05T16:00:00",
+    "location": "Sussex",
+    "description": "Literature, Book Launch, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1129"
+  },
+  {
+    "title": "Getting from A to B in Under a Month: Transport in SFF",
+    "startTime": "2026-04-05T16:30:00",
+    "endTime": "2026-04-05T17:30:00",
+    "location": "Balmoral",
+    "description": "Literature, Panel, Fantasy, History, Science Fiction, Worldbuilding, Writing, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1130"
+  },
+  {
+    "title": "Book Group: Planetfall",
+    "startTime": "2026-04-05T16:30:00",
+    "endTime": "2026-04-05T17:30:00",
+    "location": "Fan Lounge",
+    "description": "Literature, Meet Up, In-person only, No replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1131"
+  },
+  {
+    "title": "Parasocial Relationships: Managing Boundaries as a Creator",
+    "startTime": "2026-04-05T16:30:00",
+    "endTime": "2026-04-05T17:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Writing, Single Speaker/Lecture, Politics and Economics, Writing, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1132"
+  },
+  {
+    "title": "The Legend of the Condor [The Elephant and Macaw Banner]",
+    "startTime": "2026-04-05T16:30:00",
+    "endTime": "2026-04-05T19:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Tabletop RPG, Fantasy, History, Tabletop Games & LARP, Legends & Folklore, In-person only, No replay, Signup required",
+    "day": "Sunday",
+    "itemId": "1133"
+  },
+  {
+    "title": "The Gothic",
+    "startTime": "2026-04-05T16:30:00",
+    "endTime": "2026-04-05T17:30:00",
+    "location": "Pavilion",
+    "description": "Literature, Panel, Fantasy, History, Horror, Publishing, Film & TV, Literature, Reading, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1134"
+  },
+  {
+    "title": "My Last Best Story",
+    "startTime": "2026-04-05T16:30:00",
+    "endTime": "2026-04-05T17:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "Kids, Panel, Film & TV, Children's Literature, YA, Fan interest, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1135"
+  },
+  {
+    "title": "Faith, Belief, Authenticity and World-Building",
+    "startTime": "2026-04-05T16:30:00",
+    "endTime": "2026-04-05T17:30:00",
+    "location": "Sandringham",
+    "description": "Society, Panel, Fantasy, Science Fiction, Worldbuilding, Writing, Legends & Folklore, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1136"
+  },
+  {
+    "title": "Beating Procrastination",
+    "startTime": "2026-04-05T16:30:00",
+    "endTime": "2026-04-05T17:30:00",
+    "location": "Sussex",
+    "description": "Writing, Workshop, In-person only, No replay, Signup required",
+    "day": "Sunday",
+    "itemId": "1137"
+  },
+  {
+    "title": "Space is Commercial",
+    "startTime": "2026-04-05T18:00:00",
+    "endTime": "2026-04-05T19:00:00",
+    "location": "Balmoral",
+    "description": "Science, Single Speaker/Lecture, Politics and Economics, Science",
+    "day": "Sunday",
+    "itemId": "1138"
+  },
+  {
+    "title": "The Enduring Appeal of Moomintroll",
+    "startTime": "2026-04-05T18:00:00",
+    "endTime": "2026-04-05T19:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "Literature, Panel, History, Children's Literature, Reading, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1139"
+  },
+  {
+    "title": "Microgenres",
+    "startTime": "2026-04-05T18:00:00",
+    "endTime": "2026-04-05T19:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Reading, Panel, Amusement, Fantasy, Ireland, Romance, Science Fiction, Writing, Literature, Reading, Fan interest, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1140"
+  },
+  {
+    "title": "The politics of Romantasy: who gets a happy ending?",
+    "startTime": "2026-04-05T18:00:00",
+    "endTime": "2026-04-05T19:00:00",
+    "location": "Sandringham",
+    "description": "Literature, Panel, Fantasy, Romance, Worldbuilding, Writing, Feminism, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1141"
+  },
+  {
+    "title": "The BSFA Awards",
+    "startTime": "2026-04-05T18:30:00",
+    "endTime": "2026-04-05T19:00:00",
+    "location": "Pavilion",
+    "description": "BSFA, Ceremony, Literature, Art, BSFA, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1142"
+  },
+  {
+    "title": "Cavorite to Coaxium: Chemistry in Science Fiction",
+    "startTime": "2026-04-05T19:30:00",
+    "endTime": "2026-04-05T20:30:00",
+    "location": "Balmoral",
+    "description": "Science, Single Speaker/Lecture, Science, Science Fiction, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1143"
+  },
+  {
+    "title": "Plausible Alien Biology",
+    "startTime": "2026-04-05T19:30:00",
+    "endTime": "2026-04-05T20:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "Science, Panel, Science, Science Fiction, Worldbuilding, Writing, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1144"
+  },
+  {
+    "title": "You Have No Power Over Me: a retrospective on Labyrinth Film & TV, Panel, Fantasy, Film & TV, YA, Legends & Folklore, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-05T19:30:00",
+    "endTime": "2026-04-05T20:30:00",
+    "location": "Pavilion",
+    "description": "",
+    "day": "Sunday",
+    "itemId": "1145"
+  },
+  {
+    "title": "Pre-Victorian Ghost Stories",
+    "startTime": "2026-04-05T19:30:00",
+    "endTime": "2026-04-05T20:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "Literature, Single Speaker/Lecture, Streamed, Replay, type:Streaming",
+    "day": "Sunday",
+    "itemId": "1146"
+  },
+  {
+    "title": "The Fan Funds Gameshow Fan Interest, Panel, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-05T19:30:00",
+    "endTime": "2026-04-05T20:30:00",
+    "location": "Sandringham",
+    "description": "",
+    "day": "Sunday",
+    "itemId": "1147"
+  },
+  {
+    "title": "Book Launch: Briardene Books",
+    "startTime": "2026-04-05T19:30:00",
+    "endTime": "2026-04-05T20:30:00",
+    "location": "Sussex",
+    "description": "Literature, Book Launch, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1148"
+  },
+  {
+    "title": "Outrageous Liars After Dark, Panel, Amusement, Fan interest",
+    "startTime": "2026-04-05T21:00:00",
+    "endTime": "2026-04-05T22:00:00",
+    "location": "Pavilion",
+    "description": "",
+    "day": "Sunday",
+    "itemId": "1149"
+  },
+  {
+    "title": "Juliette Burton: The Villain Era Fan Interest, Panel, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-05T21:00:00",
+    "endTime": "2026-04-05T22:00:00",
+    "location": "Sandringham",
+    "description": "",
+    "day": "Sunday",
+    "itemId": "1150"
+  },
+  {
+    "title": "Sunday Filk",
+    "startTime": "2026-04-05T21:00:00",
+    "endTime": "2026-04-05T23:30:00",
+    "location": "Sussex",
+    "description": "Music, Participatory Event, In-person only, No replay",
+    "day": "Sunday",
+    "itemId": "1151"
+  },
+  {
+    "title": "Reading and Writing Zoefuturism",
+    "startTime": "2026-04-06T09:00:00",
+    "endTime": "2026-04-06T10:00:00",
+    "location": "Balmoral",
+    "description": "Science, Single Speaker/Lecture, Science Fiction, Reading, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1152"
+  },
+  {
+    "title": "Feedback Session",
+    "startTime": "2026-04-06T09:00:00",
+    "endTime": "2026-04-06T10:00:00",
+    "location": "Fan Lounge",
+    "description": "Conventions, Meet Up",
+    "day": "Monday",
+    "itemId": "1153"
+  },
+  {
+    "title": "Self-Publishing 101",
+    "startTime": "2026-04-06T09:00:00",
+    "endTime": "2026-04-06T10:30:00",
+    "location": "Sussex",
+    "description": "Writing, Workshop, Publishing, Writing, In-person only, No replay, Signup required",
+    "day": "Monday",
+    "itemId": "1154"
+  },
+  {
+    "title": "Monday gaming",
+    "startTime": "2026-04-06T10:00:00",
+    "endTime": "2026-04-06T14:00:00",
+    "location": "London (Open)",
+    "description": "Gaming, Open Gaming, Tabletop Games & LARP, In-person only, No replay",
+    "day": "Monday",
+    "itemId": "1155"
+  },
+  {
+    "title": "Learn to Read Basic Hieroglyphics",
+    "startTime": "2026-04-06T10:30:00",
+    "endTime": "2026-04-06T11:30:00",
+    "location": "Balmoral",
+    "description": "Society, Single Speaker/Lecture, History, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1156"
+  },
+  {
+    "title": "Writing in a Collaborative Universe Film & TV, Panel, Fantasy, Science Fiction, Worldbuilding, Writing, Film & TV, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-06T10:30:00",
+    "endTime": "2026-04-06T11:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "",
+    "day": "Monday",
+    "itemId": "1157"
+  },
+  {
+    "title": "Starfleet Academy 2270: Milk Run [The Code of the Spacelanes]",
+    "startTime": "2026-04-06T10:30:00",
+    "endTime": "2026-04-06T13:30:00",
+    "location": "London (Scheduled)",
+    "description": "Gaming, Scheduled Game, Science Fiction, Tabletop Games & LARP, In-person only, No replay, Signup required",
+    "day": "Monday",
+    "itemId": "1158"
+  },
+  {
+    "title": "Guided Lake Walk",
+    "startTime": "2026-04-06T10:30:00",
+    "endTime": "2026-04-06T11:30:00",
+    "location": "Other",
+    "description": "Exercise, Participatory Event, Exercise, In-person only, No replay",
+    "day": "Monday",
+    "itemId": "1159"
+  },
+  {
+    "title": "Octothorpe LIVE! Fan Interest, Podcast, Conventions, Fan interest, Podcast, Streamed, Replay, type:Streaming",
+    "startTime": "2026-04-06T10:30:00",
+    "endTime": "2026-04-06T11:30:00",
+    "location": "Pavilion",
+    "description": "",
+    "day": "Monday",
+    "itemId": "1160"
+  },
+  {
+    "title": "Author Reading III",
     "startTime": "2026-04-06T10:30:00",
     "endTime": "2026-04-06T11:30:00",
     "location": "Salisbury-Wellington",
-    "description": "Readings from Aliette de Bodard, Robin CM Duncan and Juliet E. McKenna. Hear previews of forthcoming works and favourites from their catalogues.",
-    "day": "Monday"
+    "description": "Reading, Reading, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1161"
   },
   {
-    "itemId": "4002",
+    "title": "Fanfic as Resistance",
+    "startTime": "2026-04-06T10:30:00",
+    "endTime": "2026-04-06T11:30:00",
+    "location": "Sandringham",
+    "description": "Writing, Panel, Fanfic & transformative works, Politics and Economics, Worldbuilding, Writing, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1162"
+  },
+  {
+    "title": "Weird Art and Weird Artists",
+    "startTime": "2026-04-06T12:00:00",
+    "endTime": "2026-04-06T13:00:00",
+    "location": "Balmoral",
+    "description": "Art, Panel, Guest of Honour, Maker-Crafting, Art, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1163"
+  },
+  {
     "title": "The Joy of Podcasts",
     "startTime": "2026-04-06T12:00:00",
     "endTime": "2026-04-06T13:00:00",
     "location": "Gladstone-Churchill",
-    "description": "A celebration of genre podcasts \u2014 from fiction podcasts to review shows, interview series and beyond. Panelists: Scott Edelman, Michael Ireland, Robin C.M. Duncan, Kat Kourbeti, and Devin Martin.",
-    "day": "Monday"
+    "description": "Media, Panel, Fan interest, Podcast, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1164"
   },
   {
-    "itemId": "4003",
-    "title": "Folklore, Cultures, and the Modern Fantastic: Adapting Myth",
+    "title": "And the Award Goes To...",
+    "startTime": "2026-04-06T12:00:00",
+    "endTime": "2026-04-06T13:00:00",
+    "location": "Pavilion",
+    "description": "Literature, Panel, Fantasy, Horror, Science Fiction, Writing, Literature, Fan interest, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1165"
+  },
+  {
+    "title": "Writing and Creating Audio Drama",
+    "startTime": "2026-04-06T12:00:00",
+    "endTime": "2026-04-06T13:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "Writing, Workshop, Craft of Writing, Performing Arts, Writing, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1166"
+  },
+  {
+    "title": "A Feast for the Senses: food in SFF",
+    "startTime": "2026-04-06T12:00:00",
+    "endTime": "2026-04-06T13:00:00",
+    "location": "Sandringham",
+    "description": "Literature, Panel, Fantasy, Science Fiction, Worldbuilding, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1167"
+  },
+  {
+    "title": "Try Not to Stab Yourself: Introduction to Embroidery",
+    "startTime": "2026-04-06T12:00:00",
+    "endTime": "2026-04-06T13:00:00",
+    "location": "Sussex",
+    "description": "Maker, Workshop, Maker-Crafting, In-person only, No replay, Signup required",
+    "day": "Monday",
+    "itemId": "1168"
+  },
+  {
+    "title": "The Geometry of the Place was All Wrong",
+    "startTime": "2026-04-06T13:30:00",
+    "endTime": "2026-04-06T14:30:00",
+    "location": "Balmoral",
+    "description": "Science, Single Speaker/Lecture, Fantasy, Horror, Science, Science Fiction, Literature, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1169"
+  },
+  {
+    "title": "50 years of Games Workshop",
+    "startTime": "2026-04-06T13:30:00",
+    "endTime": "2026-04-06T14:30:00",
+    "location": "Pavilion",
+    "description": "Gaming, Panel, Fantasy, History, Science Fiction, Tabletop Games & LARP, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1170"
+  },
+  {
+    "title": "Folklore, Cultures, and the Modern Fantastic: adapting myth",
     "startTime": "2026-04-06T13:30:00",
     "endTime": "2026-04-06T14:30:00",
     "location": "Sandringham",
-    "description": "How writers and artists have used and misused folklores and myths. Discussing good and bad practices in adapting myth for modern creative works. Panelists: Kat Kourbeti, M E Moirin, Johannes T Evans, Charles Stross, and Cheryl Morgan.",
-    "day": "Monday"
+    "description": "Literature, Panel, Worldbuilding, Writing, Literature, Legends & Folklore, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1171"
   },
   {
-    "itemId": "4004",
     "title": "Closing Ceremony",
-    "startTime": "2026-04-06T16:00:00",
-    "endTime": "2026-04-06T17:00:00",
-    "location": "Balmoral",
-    "description": "Join us to wrap up Iridescence, the 77th Eastercon. Highlights, thanks, and the traditional handover to next year's convention.",
-    "day": "Monday"
+    "startTime": "2026-04-06T15:00:00",
+    "endTime": "2026-04-06T16:00:00",
+    "location": "Sandringham",
+    "description": "Conventions, Ceremony, Guest of Honour, Committee, Fan interest, Streamed, Replay, type:Streaming",
+    "day": "Monday",
+    "itemId": "1172"
   }
 ]
