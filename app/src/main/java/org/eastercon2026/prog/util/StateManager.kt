@@ -11,7 +11,7 @@ class StateManager(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("event_states", Context.MODE_PRIVATE)
     private val gson = Gson()
-    private val stateMap: MutableMap<String, String>
+    private var stateMap: MutableMap<String, String>
 
     init {
         stateMap = loadFromPrefs()

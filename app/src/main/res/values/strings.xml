@@ -14,6 +14,11 @@
     <string name="no_description">No description available.</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_buy_coffee">Buy Me a Coffee ☕</string>
+    <string name="filter_going">Going</string>
+    <string name="filter_interested">Interested</string>
+    <string name="filter_default">Default</string>
+    <string name="filter_hidden">Hidden</string>
+    <string name="filter_passed">Passed</string>
     <string name="your_interest">Your Interest</string>
     <string name="going">Going</string>
     <string name="interested">Interested</string>

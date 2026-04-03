@@ -61,8 +61,11 @@ class VersionChecker {
 
     private fun isNewer(latest: String, current: String): Boolean {
         return try {
-            val latestParts = latest.split(".").map { it.toIntOrNull() ?: 0 }
-            val currentParts = current.split(".").map { it.toIntOrNull() ?: 0 }
+            // Strip any suffix after a hyphen (e.g. "1.1.0-45d18e7" → "1.1.0")
+            val latestClean = latest.substringBefore("-")
+            val currentClean = current.substringBefore("-")
+            val latestParts = latestClean.split(".").map { it.toIntOrNull() ?: 0 }
+            val currentParts = currentClean.split(".").map { it.toIntOrNull() ?: 0 }
             for (i in 0 until maxOf(latestParts.size, currentParts.size)) {
                 val l = latestParts.getOrElse(i) { 0 }
                 val c = currentParts.getOrElse(i) { 0 }

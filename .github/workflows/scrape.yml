@@ -1,0 +1,51 @@
+name: Scrape Programme
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r scraper/requirements.txt
+
+      - name: Run scraper
+        run: |
+          python scraper/scrape.py > programme_new.json 2> scraper.log || true
+          cat scraper.log
+          if [ -s programme_new.json ] && python -c "import json,sys; d=json.load(open('programme_new.json')); sys.exit(0 if len(d)>0 else 1)"; then
+            echo "Scraper returned $(python -c "import json; print(len(json.load(open('programme_new.json'))))" ) items"
+            cp programme_new.json app/src/main/assets/programme.json
+          else
+            echo "Scraper returned no data, keeping existing programme.json"
+          fi
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet app/src/main/assets/programme.json && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push updated programme data
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          ITEM_COUNT=$(python -c "import json; print(len(json.load(open('app/src/main/assets/programme.json'))))")
+          git add app/src/main/assets/programme.json
+          git commit -m "Update programme data (${ITEM_COUNT} items) [skip ci]"
+          git push
