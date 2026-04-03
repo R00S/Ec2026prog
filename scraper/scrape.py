@@ -336,37 +336,82 @@ def normalise_json_item(raw):
     }
 
 
+MIN_EVENTS_IN_LIST = 5  # Minimum items to consider a list as programme data
+
+
+def _extract_json_value(text, start_pos):
+    """Extract a complete JSON value (array or object) starting at start_pos.
+
+    Uses a simple bracket/brace counter to find the matching closing delimiter,
+    handling nested structures correctly.
+    Returns the parsed value, or None on failure.
+    """
+    if start_pos >= len(text):
+        return None
+    opener = text[start_pos]
+    if opener not in ("[", "{"):
+        return None
+    closer = "]" if opener == "[" else "}"
+    depth = 0
+    in_string = False
+    escape_next = False
+    for i in range(start_pos, len(text)):
+        ch = text[i]
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == "\\" and in_string:
+            escape_next = True
+            continue
+        if ch == '"' and not escape_next:
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch == opener:
+            depth += 1
+        elif ch == closer:
+            depth -= 1
+            if depth == 0:
+                try:
+                    return json.loads(text[start_pos:i + 1])
+                except (json.JSONDecodeError, ValueError):
+                    return None
+    return None
+
+
 def try_extract_from_page_scripts(soup):
     """Try to extract programme data embedded as JSON in page script tags.
 
     Many SPA/React convention guide sites pre-render or embed their data as
     a JavaScript variable or inline JSON in a <script> tag.
     """
-    patterns = [
-        # var programme = [...]  or  window.programme = [...]
-        re.compile(r'(?:var|let|const|window\.)\s*(?:programme|program|events?|schedule|items?)\s*=\s*(\[.*?\])\s*[;,]', re.DOTALL | re.IGNORECASE),
-        # {"programme": [...]}  or similar top-level object
-        re.compile(r'(?:var|let|const|window\.)\s*\w+\s*=\s*(\{.*?\})\s*[;,]', re.DOTALL),
-    ]
+    # Variable names that commonly hold programme/event data
+    var_pattern = re.compile(
+        r'(?:var|let|const|window\.)\s*'
+        r'(?:programme|program|events?|schedule|sessions?|items?)'
+        r'\s*=\s*',
+        re.IGNORECASE,
+    )
     for script in soup.find_all("script"):
         text = script.get_text()
         if not text:
             continue
-        for pattern in patterns:
-            for match in pattern.finditer(text):
-                try:
-                    data = json.loads(match.group(1))
-                    if isinstance(data, list) and len(data) > 5:
-                        # Looks like a real list of events
-                        print(f"Extracted {len(data)} items from script tag", file=sys.stderr)
-                        return data
-                    if isinstance(data, dict):
-                        for key in ("programme", "program", "events", "items", "sessions"):
-                            if key in data and isinstance(data[key], list) and len(data[key]) > 5:
-                                print(f"Extracted {len(data[key])} items from script tag (key={key})", file=sys.stderr)
-                                return data[key]
-                except (json.JSONDecodeError, ValueError):
+        for match in var_pattern.finditer(text):
+            start = match.end()
+            if start < len(text) and text[start] in ("[", "{"):
+                data = _extract_json_value(text, start)
+                if data is None:
                     continue
+                if isinstance(data, list) and len(data) >= MIN_EVENTS_IN_LIST:
+                    print(f"Extracted {len(data)} items from script tag", file=sys.stderr)
+                    return data
+                if isinstance(data, dict):
+                    for key in ("programme", "program", "events", "items", "sessions"):
+                        val = data.get(key)
+                        if isinstance(val, list) and len(val) >= MIN_EVENTS_IN_LIST:
+                            print(f"Extracted {len(val)} items from script tag (key={key})", file=sys.stderr)
+                            return val
     return None
 
 
