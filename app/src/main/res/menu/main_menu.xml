@@ -6,4 +6,8 @@
         android:title="@string/action_refresh"
         android:icon="@android:drawable/ic_menu_rotate"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_buy_coffee"
+        android:title="@string/action_buy_coffee"
+        app:showAsAction="never" />
 </menu>

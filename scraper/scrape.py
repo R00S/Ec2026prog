@@ -7,6 +7,9 @@ Usage:
 
 Outputs JSON array of programme items to stdout.
 Exits with code 0 on success, 1 on failure.
+
+Supports Grenadine-powered event sites by trying the program.json API
+first, then falling back to HTML scraping.
 """
 
 import json
@@ -32,7 +35,7 @@ SESSION.headers.update({
 })
 TIMEOUT = 30
 
-# Eastercon 2026 dates (Fri 3 – Mon 6 April 2026)
+# Eastercon 2026 dates (Fri 3 - Mon 6 April 2026)
 DATE_TO_DAY = {
     "2026-04-03": "Friday",
     "2026-04-04": "Saturday",
@@ -65,6 +68,69 @@ def fetch(url, **kwargs):
     except Exception as e:
         print(f"Error fetching {url}: {e}", file=sys.stderr)
         return None
+
+
+def try_grenadine_api():
+    """Try Grenadine program.json API endpoint (used by convention guide sites).
+
+    See https://github.com/mcdemarco/grenadine2konopas for format details.
+    """
+    candidates = [
+        f"{BASE_URL}/program.json",
+        f"{BASE_URL}/program.json?scale=2.0",
+    ]
+    for url in candidates:
+        print(f"Trying Grenadine API: {url}", file=sys.stderr)
+        resp = fetch(url)
+        if resp is None:
+            continue
+        ct = resp.headers.get("content-type", "")
+        if "json" not in ct and not resp.text.strip().startswith("["):
+            continue
+        try:
+            data = resp.json()
+            if isinstance(data, list) and len(data) > 0:
+                print(f"Got {len(data)} items from Grenadine API", file=sys.stderr)
+                return data
+        except Exception as e:
+            print(f"JSON parse error for {url}: {e}", file=sys.stderr)
+    return None
+
+
+def normalise_grenadine_item(raw):
+    """Normalise a Grenadine program.json item to our schema."""
+    item_id = str(raw.get("id", ""))
+    title = raw.get("title", "")
+
+    # Grenadine uses datetime/endtime in ISO format
+    start_time = raw.get("datetime", "") or raw.get("startTime", "")
+    end_time = raw.get("endtime", "") or raw.get("endTime", "")
+
+    # Location is in loc array: ["Room Name", ""]
+    loc = raw.get("loc", [])
+    location = loc[0] if isinstance(loc, list) and loc else raw.get("location", "")
+
+    # Description may contain HTML
+    desc_raw = raw.get("desc", "") or raw.get("description", "")
+    if "<" in desc_raw:
+        try:
+            description = BeautifulSoup(desc_raw, "lxml").get_text(separator=" ", strip=True)
+        except Exception:
+            description = re.sub(r"<[^>]+>", " ", desc_raw).strip()
+    else:
+        description = desc_raw
+
+    day = infer_day(start_time, raw.get("date", ""))
+
+    return {
+        "itemId": item_id,
+        "title": title,
+        "startTime": start_time,
+        "endTime": end_time,
+        "location": location,
+        "description": description,
+        "day": day,
+    }
 
 
 def try_json_api():
@@ -103,6 +169,15 @@ def try_json_api():
 def extract_item_links(soup, page_url):
     """Find all programme item links from the main page."""
     links = set()
+
+    # Look for Grenadine-style data-session-id elements first
+    for el in soup.select("[data-session-id]"):
+        session_id = el.get("data-session-id")
+        if session_id:
+            links.add(f"{page_url.rstrip('/')}/schedule/{session_id}/")
+    if links:
+        return sorted(links)
+
     for a in soup.find_all("a", href=True):
         href = a["href"].strip()
         abs_href = urljoin(page_url, href)
@@ -150,7 +225,6 @@ def parse_detail_page(url, soup):
     item_id_match = re.search(r"/(\d+)(?:/|$)", url)
     item_id = item_id_match.group(1) if item_id_match else url.rstrip("/").split("/")[-1]
 
-    # Title
     title = ""
     for sel in ["h1", ".event-title", ".item-title", "[class*=title]"]:
         el = soup.select_one(sel)
@@ -161,7 +235,6 @@ def parse_detail_page(url, soup):
     if not title:
         title = soup.title.get_text(strip=True) if soup.title else ""
 
-    # Start / end time
     start_time = ""
     end_time = ""
     for sel in [".start-time", ".event-start", "[class*=start]", "time[datetime]",
@@ -179,7 +252,6 @@ def parse_detail_page(url, soup):
                 end_time = val
                 break
 
-    # Meta tags fallback
     for meta in soup.find_all("meta"):
         prop = meta.get("property", "") + meta.get("name", "")
         if "start" in prop and not start_time:
@@ -187,7 +259,6 @@ def parse_detail_page(url, soup):
         if "end" in prop and not end_time:
             end_time = meta.get("content", "")
 
-    # Location / room
     location = ""
     for sel in [".location", ".room", ".venue", "[class*=location]", "[class*=room]",
                 "[class*=venue]", ".where", "[class*=where]"]:
@@ -197,7 +268,6 @@ def parse_detail_page(url, soup):
             if location:
                 break
 
-    # Description
     description = ""
     for sel in [".description", ".event-description", ".item-description",
                 "[class*=description]", ".content", ".body", "article",
@@ -268,8 +338,7 @@ def scrape_html():
     print(f"Found {len(links)} item links", file=sys.stderr)
 
     if not links:
-        print("No item links found – trying broader extraction", file=sys.stderr)
-        # Broader: any internal link that looks like a page
+        print("No item links found - trying broader extraction", file=sys.stderr)
         base_host = urlparse(BASE_URL).netloc
         for a in soup.find_all("a", href=True):
             abs_href = urljoin(BASE_URL, a["href"])
@@ -300,7 +369,16 @@ def scrape_html():
 
 
 def main():
-    # First try JSON API endpoints
+    # First try Grenadine program.json API (used by convention guide sites)
+    grenadine_data = try_grenadine_api()
+    if grenadine_data:
+        events = [normalise_grenadine_item(item) for item in grenadine_data]
+        events = [e for e in events if e["title"]]
+        if events:
+            print(json.dumps(events, ensure_ascii=False, indent=2))
+            return 0
+
+    # Try other JSON API endpoints
     json_data = try_json_api()
     if json_data:
         events = [normalise_json_item(item) for item in json_data]
