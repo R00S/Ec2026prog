@@ -1,0 +1,71 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build release APK
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Rename APK
+        run: |
+          mkdir -p release-artifacts
+          find app/build/outputs/apk/release -name "*.apk" -exec cp {} release-artifacts/Ec2026prog-release.apk \;
+
+      - name: Get version name
+        id: version
+        run: |
+          VERSION=$(./gradlew -q printVersionName 2>/dev/null || grep "versionName" app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/' | head -1)
+          echo "version=${VERSION:-1.0.0}" >> "$GITHUB_OUTPUT"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "tag=v${VERSION:-1.0.0}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Eastercon 2026 Programme Guide ${{ steps.version.outputs.version }}"
+          body: |
+            Automated release from commit ${{ github.sha }}
+
+            ## Installation
+            Download the APK and install it on your Android device.
+            You may need to enable "Install from unknown sources" in your Android settings.
+          files: release-artifacts/Ec2026prog-release.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Eastercon 2026</string>
+    <string name="tab_all">All</string>
+    <string name="tab_fri">Fri</string>
+    <string name="tab_sat">Sat</string>
+    <string name="tab_sun">Sun</string>
+    <string name="tab_mon">Mon</string>
+    <string name="loading_fetching">Fetching programme…</string>
+    <string name="loading_progress">Loading %1$d of %2$d…</string>
+    <string name="error_no_events">Could not load programme. Check your connection and refresh.</string>
+    <string name="no_events_for_day">No events for this day.</string>
+    <string name="unknown_location">Location TBC</string>
+    <string name="no_description">No description available.</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="your_interest">Your Interest</string>
+    <string name="going">Going</string>
+    <string name="interested">Interested</string>
+    <string name="hidden">Hide</string>
+    <string name="update_available_title">Update Available</string>
+    <string name="update_available_message">Version %1$s is available. Would you like to download it?</string>
+    <string name="update_download">Download</string>
+    <string name="update_later">Later</string>
+</resources>
