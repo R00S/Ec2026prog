@@ -117,8 +117,8 @@ class ProgrammeFetcher {
                 if (!response.isSuccessful) continue
                 val body = response.body?.string() ?: continue
                 val items = parsePlanzResponse(body) ?: continue
-                if (items.isNotEmpty()) {
-                    Log.d(TAG, "Got ${items.size} items from PlanZ at $url")
+                if (items.size() > 0) {
+                    Log.d(TAG, "Got ${items.size()} items from PlanZ at $url")
                     return parsePlanzItems(items)
                 }
             } catch (e: Exception) {
