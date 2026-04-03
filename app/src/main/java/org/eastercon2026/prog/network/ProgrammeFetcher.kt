@@ -213,6 +213,11 @@ class ProgrammeFetcher {
 
                 val day = inferDay(startTime, "" /* no extra page text; day is inferred from startTime date */)
                 Event(itemId, title, startTime, endTime, location, description, day)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to parse PlanZ item: ${e.message}")
+                null
+            }
+        }
     }
 
     // ── Grenadine program.json API ───────────────────────────────────────
