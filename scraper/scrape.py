@@ -20,7 +20,7 @@ import io
 import json
 import re
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import urljoin, urlparse
 
 try:
@@ -115,8 +115,6 @@ def normalise_planz_item(raw):
     PlanZ items use separate ``date`` (YYYY-MM-DD) and ``time`` (HH:MM)
     fields instead of a combined ISO datetime, and ``mins`` for duration.
     """
-    from datetime import datetime as _dt, timedelta as _td
-
     item_id = str(raw.get("id", ""))
     title = raw.get("title", "")
 
@@ -129,8 +127,8 @@ def normalise_planz_item(raw):
     if date and time_str:
         start_time = f"{date}T{time_str}:00"
         try:
-            start_dt = _dt.strptime(start_time, "%Y-%m-%dT%H:%M:%S")
-            end_dt = start_dt + _td(minutes=int(mins))
+            start_dt = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S")
+            end_dt = start_dt + timedelta(minutes=int(mins))
             end_time = end_dt.strftime("%Y-%m-%dT%H:%M:%S")
         except (ValueError, TypeError):
             pass
@@ -329,10 +327,11 @@ def try_js_bundle_config():
         """Search js_text for PROGRAM_DATA_URL and fetch the pointed-to data."""
         # Matches: "PROGRAM_DATA_URL":"...", PROGRAM_DATA_URL:"...", etc.
         match = re.search(
-            r'PROGRAM_DATA_URL["\']\s*[:=]\s*["\']([^"\']+)["\']', js_text
+            r'PROGRAM_DATA_URL["\']?\s*[:=]\s*["\']([^"\']+)["\']', js_text
         )
         if not match:
-            # Alternate quoting style in minified bundles
+            # Alternate quoting style in minified bundles: PROGRAM_DATA_URL<separator>"<url>"
+            # Require at least 4 chars to avoid matching empty or placeholder values like '""'
             match = re.search(
                 r'PROGRAM_DATA_URL[^"\']{0,5}["\']([^"\']{4,})["\']', js_text
             )
