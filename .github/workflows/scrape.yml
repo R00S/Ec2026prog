@@ -8,10 +8,8 @@ on:
     branches:
       - main
       - master
-      - 'copilot/**'
     paths:
       - 'scraper/**'
-      - 'app/src/main/assets/programme.json'
       - '.github/workflows/scrape.yml'
 
 permissions:

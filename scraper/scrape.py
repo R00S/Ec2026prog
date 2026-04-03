@@ -341,7 +341,8 @@ def normalise_json_item(raw):
     }
 
 
-MIN_EVENTS_IN_LIST = 5  # Minimum items to consider a list as programme data
+MIN_EVENTS_IN_LIST = 5   # Minimum items to consider a list as programme data
+EVENT_ID_START = 2000    # Base for auto-generated event IDs (ICS/PDF paths)
 
 # ── BST timezone for Eastercon 2026 (Edinburgh, April) ─────────────────
 try:
@@ -366,7 +367,7 @@ def _to_naive_local(dt):
         return dt.astimezone(_BST).replace(tzinfo=None)
     # Fallback: manually add 1 hour for BST
     from datetime import timedelta
-    return (dt.utctimetuple() and dt.replace(tzinfo=None) + timedelta(hours=1))
+    return dt.replace(tzinfo=None) + timedelta(hours=1)
 
 
 def _discover_alt_format_links():
@@ -422,7 +423,7 @@ def try_ics():
                 if component.name != "VEVENT":
                     continue
                 uid = str(component.get("UID", ""))
-                item_id = re.sub(r"@.*$", "", uid) or str(2000 + len(events))
+                item_id = re.sub(r"@.*$", "", uid) or str(EVENT_ID_START + len(events))
                 title = str(component.get("SUMMARY", "")).strip()
                 if not title:
                     continue
@@ -487,7 +488,7 @@ def _parse_grenadine_pdf_bytes(pdf_bytes):
 
     events = []
     current_day = "Friday"
-    event_id_counter = 2000
+    event_id_counter = EVENT_ID_START
 
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
         for page in pdf.pages:
@@ -568,7 +569,7 @@ def _parse_grenadine_pdf_bytes(pdf_bytes):
 def try_pdf():
     """Try to fetch and parse a PDF programme from the alt-formats page."""
     try:
-        import pdfplumber  # noqa: F401
+        import pdfplumber
     except ImportError:
         print("pdfplumber not installed, skipping PDF", file=sys.stderr)
         return None
