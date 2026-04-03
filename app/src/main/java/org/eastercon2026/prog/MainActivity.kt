@@ -1,5 +1,6 @@
 package org.eastercon2026.prog
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -34,6 +35,7 @@ import org.eastercon2026.prog.util.StateManager
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -99,6 +101,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_refresh -> {
                 refreshProgramme()
+                true
+            }
+            R.id.action_about -> {
+                showAboutDialog()
                 true
             }
             R.id.action_buy_coffee -> {
@@ -191,9 +197,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshProgramme() {
         setLoading(true, getString(R.string.loading_fetching))
+        val fetcher = ProgrammeFetcher()
         lifecycleScope.launch {
             val events = withContext(Dispatchers.IO) {
-                ProgrammeFetcher().fetchProgramme { done, total ->
+                fetcher.fetchProgramme { done, total ->
                     lifecycleScope.launch(Dispatchers.Main) {
                         if (progressBar.isIndeterminate) {
                             progressBar.isIndeterminate = false
@@ -209,6 +216,7 @@ class MainActivity : AppCompatActivity() {
                     database.eventDao().deleteAll()
                     database.eventDao().insertAll(events.map { it.toEntity() })
                 }
+                saveDataMeta(fetcher.lastSource)
                 allEvents = events
                 displayEvents(allEvents)
             } else {
@@ -235,10 +243,26 @@ class MainActivity : AppCompatActivity() {
             }
             EventAdapter.EventItem(event, effectiveState)
         }.filter { it.state in visibleStates }
+            .sortedWith(compareBy { parseStartTime(it.event.startTime) })
 
         adapter.submitList(items)
         emptyView.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
         if (items.isEmpty()) emptyView.text = getString(R.string.no_events_for_day)
+    }
+
+    private fun parseStartTime(startTime: String): LocalDateTime {
+        if (startTime.isBlank()) return LocalDateTime.MAX
+        val parsers = listOf(
+            DateTimeFormatter.ISO_DATE_TIME,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        )
+        for (fmt in parsers) {
+            try { return LocalDateTime.parse(startTime, fmt) } catch (e: DateTimeParseException) { /* try next */ }
+        }
+        return LocalDateTime.MAX
     }
 
     private fun isPassed(endTime: String, now: LocalDateTime): Boolean {
@@ -315,6 +339,78 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    // ── Data source / refresh metadata ─────────────────────────────────
+
+    private fun saveDataMeta(source: String) {
+        val ts = LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("d MMM yyyy HH:mm", Locale.ENGLISH))
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putString(KEY_DATA_SOURCE, source)
+            .putString(KEY_LAST_REFRESH, ts)
+            .apply()
+    }
+
+    private fun getDataMeta(): Pair<String, String> {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val source = prefs.getString(KEY_DATA_SOURCE, getString(R.string.about_bundled))
+            ?: getString(R.string.about_bundled)
+        val refresh = prefs.getString(KEY_LAST_REFRESH, null)
+            ?: getString(R.string.about_never_refreshed)
+        return Pair(source, refresh)
+    }
+
+    // ── About dialog ────────────────────────────────────────────────────
+
+    @Suppress("DEPRECATION")
+    private fun showAboutDialog() {
+        val currentVersion = try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                packageManager.getPackageInfo(packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0)).versionName
+            } else {
+                packageManager.getPackageInfo(packageName, 0).versionName
+            }
+        } catch (e: Exception) { "?" } ?: "?"
+
+        val (source, refresh) = getDataMeta()
+        val message = buildString {
+            appendLine(getString(R.string.about_version, currentVersion))
+            appendLine(getString(R.string.about_latest, getString(R.string.about_checking)))
+            appendLine()
+            appendLine(getString(R.string.about_data_source, source))
+            appendLine(getString(R.string.about_last_refresh, refresh))
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(getString(R.string.about_title))
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.about_close), null)
+            .show()
+
+        // Fetch latest release version in background and update the message
+        lifecycleScope.launch {
+            val latest = withContext(Dispatchers.IO) {
+                VersionChecker().getLatestRelease()
+            }
+            val latestLabel = if (latest != null) latest.tagName else "–"
+            val updatedMessage = buildString {
+                appendLine(getString(R.string.about_version, currentVersion))
+                val upToDate = latest == null ||
+                    latest.tagName.trimStart('v') == currentVersion
+                if (upToDate) {
+                    appendLine(getString(R.string.about_up_to_date))
+                } else {
+                    appendLine(getString(R.string.about_latest, latestLabel))
+                }
+                appendLine()
+                appendLine(getString(R.string.about_data_source, source))
+                appendLine(getString(R.string.about_last_refresh, refresh))
+            }
+            if (dialog.isShowing) {
+                dialog.setMessage(updatedMessage)
+            }
+        }
+    }
+
     private fun EventEntity.toEvent() = Event(
         itemId = itemId,
         title = title,
@@ -338,5 +434,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "MainActivity"
         const val DAY_ALL = "All"
+        private const val PREFS_NAME = "data_meta"
+        private const val KEY_DATA_SOURCE = "data_source"
+        private const val KEY_LAST_REFRESH = "last_refresh"
     }
 }

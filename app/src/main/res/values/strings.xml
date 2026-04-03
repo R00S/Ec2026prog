@@ -13,7 +13,7 @@
     <string name="unknown_location">Location TBC</string>
     <string name="no_description">No description available.</string>
     <string name="action_refresh">Refresh</string>
-    <string name="action_buy_coffee">Buy Me a Coffee ☕</string>
+    <string name="action_buy_coffee">Buy the creator of the app a coffee! ☕</string>
     <string name="filter_going">Going</string>
     <string name="filter_interested">Interested</string>
     <string name="filter_default">Default</string>
@@ -27,4 +27,15 @@
     <string name="update_available_message">Version %1$s is available. Would you like to download it?</string>
     <string name="update_download">Download</string>
     <string name="update_later">Later</string>
+    <string name="action_about">About</string>
+    <string name="about_title">About</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_latest">Latest available: %1$s</string>
+    <string name="about_up_to_date">Up to date ✓</string>
+    <string name="about_data_source">Data source: %1$s</string>
+    <string name="about_last_refresh">Last refreshed: %1$s</string>
+    <string name="about_never_refreshed">Not yet refreshed</string>
+    <string name="about_bundled">Bundled (app install)</string>
+    <string name="about_checking">Checking…</string>
+    <string name="about_close">Close</string>
 </resources>
