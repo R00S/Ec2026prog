@@ -1,6 +1,8 @@
 package org.eastercon2026.prog.network
 
 import android.util.Log
+import com.google.gson.JsonArray
+import com.google.gson.JsonParser
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.eastercon2026.prog.model.Event
@@ -23,6 +25,175 @@ class ProgrammeFetcher {
 
     fun fetchProgramme(progressCallback: ((Int, Int) -> Unit)? = null): List<Event> {
         Log.d(TAG, "Starting programme fetch from $baseUrl")
+
+        // Try Grenadine program.json API first (used by convention guide sites)
+        val grenadineEvents = tryGrenadineApi()
+        if (grenadineEvents.isNotEmpty()) {
+            Log.d(TAG, "Got ${grenadineEvents.size} events from Grenadine API")
+            progressCallback?.invoke(grenadineEvents.size, grenadineEvents.size)
+            return grenadineEvents
+        }
+
+        // Try other common JSON API endpoints
+        val jsonEvents = tryJsonApis()
+        if (jsonEvents.isNotEmpty()) {
+            Log.d(TAG, "Got ${jsonEvents.size} events from JSON API")
+            progressCallback?.invoke(jsonEvents.size, jsonEvents.size)
+            return jsonEvents
+        }
+
+        // Fall back to HTML scraping
+        return scrapeHtml(progressCallback)
+    }
+
+    // ── Grenadine program.json API ───────────────────────────────────────
+
+    private fun tryGrenadineApi(): List<Event> {
+        val urls = listOf(
+            "$baseUrl/program.json",
+            "$baseUrl/program.json?scale=2.0"
+        )
+        for (url in urls) {
+            Log.d(TAG, "Trying Grenadine API: $url")
+            try {
+                val json = fetchJson(url)
+                if (json != null && json.isJsonArray && json.asJsonArray.size() > 0) {
+                    return parseGrenadineItems(json.asJsonArray)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "Grenadine API failed for $url: ${e.message}")
+            }
+        }
+        return emptyList()
+    }
+
+    private fun parseGrenadineItems(array: JsonArray): List<Event> {
+        return array.mapNotNull { element ->
+            try {
+                val obj = element.asJsonObject
+                val itemId = obj.get("id")?.asString ?: return@mapNotNull null
+                val title = obj.get("title")?.asString?.trim()
+                    ?.takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+
+                val startTime = obj.get("datetime")?.asString
+                    ?: obj.get("startTime")?.asString ?: ""
+                val endTime = obj.get("endtime")?.asString
+                    ?: obj.get("endTime")?.asString ?: ""
+
+                // Location is in loc array: ["Room Name", ""]
+                val location = try {
+                    val loc = obj.getAsJsonArray("loc")
+                    loc?.firstOrNull()?.asString ?: ""
+                } catch (e: Exception) {
+                    obj.get("location")?.asString ?: ""
+                }
+
+                // Description may contain HTML
+                val descRaw = obj.get("desc")?.asString
+                    ?: obj.get("description")?.asString ?: ""
+                val description = if (descRaw.contains("<")) {
+                    Jsoup.parse(descRaw).text()
+                } else {
+                    descRaw
+                }
+
+                val day = inferDay(startTime, "")
+
+                Event(itemId, title, startTime, endTime, location, description, day)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to parse Grenadine item: ${e.message}")
+                null
+            }
+        }
+    }
+
+    // ── Generic JSON API endpoints ───────────────────────────────────────
+
+    private fun tryJsonApis(): List<Event> {
+        val urls = listOf(
+            "$baseUrl/api/events",
+            "$baseUrl/api/programme",
+            "$baseUrl/programme.json",
+            "$baseUrl/events.json",
+            "$baseUrl/data/events.json",
+            "$baseUrl/api/items"
+        )
+        for (url in urls) {
+            Log.d(TAG, "Trying JSON endpoint: $url")
+            try {
+                val json = fetchJson(url) ?: continue
+                val array = when {
+                    json.isJsonArray -> json.asJsonArray
+                    json.isJsonObject -> {
+                        val obj = json.asJsonObject
+                        listOf("events", "programme", "items", "data")
+                            .firstNotNullOfOrNull { key ->
+                                obj.getAsJsonArray(key)?.takeIf { it.size() > 0 }
+                            } ?: continue
+                    }
+                    else -> continue
+                }
+                if (array.size() > 0) {
+                    val events = parseJsonItems(array)
+                    if (events.isNotEmpty()) return events
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "JSON API failed for $url: ${e.message}")
+            }
+        }
+        return emptyList()
+    }
+
+    private fun parseJsonItems(array: JsonArray): List<Event> {
+        return array.mapNotNull { element ->
+            try {
+                val obj = element.asJsonObject
+                fun get(vararg keys: String): String {
+                    for (k in keys) {
+                        val v = obj.get(k)?.asString?.trim()
+                        if (!v.isNullOrEmpty()) return v
+                    }
+                    return ""
+                }
+
+                val itemId = get("id", "itemId", "item_id")
+                val title = get("title", "name", "summary")
+                    .takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+                val startTime = get("startTime", "start_time", "start", "begins_at", "datetime_start")
+                val endTime = get("endTime", "end_time", "end", "ends_at", "datetime_end")
+                val location = get("location", "room", "venue", "place")
+                val description = get("description", "body", "abstract", "content", "detail")
+                val dayRaw = get("day", "weekday", "date")
+                val day = DAY_NAMES[dayRaw.lowercase().take(3)] ?: inferDay(startTime, dayRaw)
+
+                Event(itemId, title, startTime, endTime, location, description, day)
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to parse JSON item: ${e.message}")
+                null
+            }
+        }
+    }
+
+    private fun fetchJson(url: String): com.google.gson.JsonElement? {
+        return try {
+            val request = Request.Builder().url(url)
+                .header("Accept", "application/json")
+                .build()
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) return null
+            val body = response.body?.string() ?: return null
+            val trimmed = body.trim()
+            if (!trimmed.startsWith("[") && !trimmed.startsWith("{")) return null
+            JsonParser.parseString(body)
+        } catch (e: Exception) {
+            Log.w(TAG, "Error fetching JSON $url: ${e.message}")
+            null
+        }
+    }
+
+    // ── HTML scraping fallback ───────────────────────────────────────────
+
+    private fun scrapeHtml(progressCallback: ((Int, Int) -> Unit)?): List<Event> {
         val mainDoc = fetchDocument(baseUrl) ?: run {
             Log.e(TAG, "Failed to load main page")
             return emptyList()
@@ -191,7 +362,11 @@ class ProgrammeFetcher {
     }
 
     private fun inferDay(startTime: String, doc: Document): String {
-        // Eastercon 2026 is 2–5 April 2026 (Fri–Mon)
+        return inferDay(startTime, doc.text())
+    }
+
+    private fun inferDay(startTime: String, pageText: String): String {
+        // Eastercon 2026 is 3–6 April 2026 (Fri–Mon)
         val dayPatterns = mapOf(
             "friday" to "Friday", "fri" to "Friday",
             "saturday" to "Saturday", "sat" to "Saturday",
@@ -200,9 +375,9 @@ class ProgrammeFetcher {
         )
 
         // Check page text for day name
-        val pageText = doc.text().lowercase()
+        val lowerPageText = pageText.lowercase()
         for ((pattern, day) in dayPatterns) {
-            if (pageText.contains(pattern)) return day
+            if (lowerPageText.contains(pattern)) return day
         }
 
         // Check start time string
@@ -245,5 +420,11 @@ class ProgrammeFetcher {
 
     companion object {
         private const val TAG = "ProgrammeFetcher"
+        private val DAY_NAMES = mapOf(
+            "fri" to "Friday", "friday" to "Friday",
+            "sat" to "Saturday", "saturday" to "Saturday",
+            "sun" to "Sunday", "sunday" to "Sunday",
+            "mon" to "Monday", "monday" to "Monday"
+        )
     }
 }

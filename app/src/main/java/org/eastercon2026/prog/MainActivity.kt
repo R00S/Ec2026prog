@@ -78,7 +78,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh display in case states changed in detail view
+        // Reload states from SharedPreferences in case they changed in detail view
+        stateManager.reload()
         if (allEvents.isNotEmpty()) {
             displayEvents(allEvents)
         }

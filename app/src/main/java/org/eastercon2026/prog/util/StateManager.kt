@@ -14,17 +14,26 @@ class StateManager(context: Context) {
     private val stateMap: MutableMap<String, String>
 
     init {
+        stateMap = loadFromPrefs()
+    }
+
+    /** Reload state from SharedPreferences (call after returning from another activity). */
+    fun reload() {
+        stateMap = loadFromPrefs()
+    }
+
+    fun getState(itemId: String): EventState =
+        EventState.fromString(stateMap[itemId] ?: EventState.DEFAULT.name)
+
+    private fun loadFromPrefs(): MutableMap<String, String> {
         val json = prefs.getString(KEY_STATES, null)
-        stateMap = if (json != null) {
+        return if (json != null) {
             val type = object : TypeToken<MutableMap<String, String>>() {}.type
             gson.fromJson(json, type) ?: mutableMapOf()
         } else {
             mutableMapOf()
         }
     }
-
-    fun getState(itemId: String): EventState =
-        EventState.fromString(stateMap[itemId] ?: EventState.DEFAULT.name)
 
     fun setState(itemId: String, state: EventState) {
         if (state == EventState.DEFAULT) {
