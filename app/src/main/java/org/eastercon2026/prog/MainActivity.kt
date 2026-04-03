@@ -1,6 +1,7 @@
 package org.eastercon2026.prog
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -92,6 +95,10 @@ class MainActivity : AppCompatActivity() {
                 refreshProgramme()
                 true
             }
+            R.id.action_buy_coffee -> {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://buymeacoffee.com/r00s")))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -128,6 +135,30 @@ class MainActivity : AppCompatActivity() {
             }
             if (entities.isNotEmpty()) {
                 allEvents = entities.map { it.toEvent() }
+                displayEvents(allEvents)
+            } else {
+                loadFromBundledAsset()
+            }
+        }
+    }
+
+    private fun loadFromBundledAsset() {
+        lifecycleScope.launch {
+            val events = withContext(Dispatchers.IO) {
+                try {
+                    val json = assets.open("programme.json").bufferedReader().use { it.readText() }
+                    val type = object : TypeToken<List<Event>>() {}.type
+                    Gson().fromJson<List<Event>>(json, type)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to load bundled programme: ${e.message}")
+                    emptyList()
+                }
+            }
+            if (events.isNotEmpty()) {
+                withContext(Dispatchers.IO) {
+                    database.eventDao().insertAll(events.map { it.toEntity() })
+                }
+                allEvents = events
                 displayEvents(allEvents)
             } else {
                 refreshProgramme()

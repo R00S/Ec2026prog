@@ -1,0 +1,119 @@
+[
+  {
+    "itemId": "1001",
+    "title": "Opening Ceremony",
+    "startTime": "2026-04-03T14:00:00",
+    "endTime": "2026-04-03T15:00:00",
+    "location": "Balmoral",
+    "description": "Welcome to Iridescence – the 77th Eastercon! Join us as we officially open the convention with our Guests of Honour: R. J. Barker, Emma Newman, Karen Lord, and fan guests Serena Culfeather and John Wilson.",
+    "day": "Friday"
+  },
+  {
+    "itemId": "1002",
+    "title": "Book Launch: Wizard's Tower Press",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T17:30:00",
+    "location": "Sussex",
+    "description": "Wizard's Tower Press presents their latest titles. Join the authors for readings, discussion and book signing.",
+    "day": "Friday"
+  },
+  {
+    "itemId": "1003",
+    "title": "Obsidian Book Launch",
+    "startTime": "2026-04-03T19:30:00",
+    "endTime": "2026-04-03T20:30:00",
+    "location": "Sussex",
+    "description": "Join us for the launch of Obsidian, with readings and refreshments.",
+    "day": "Friday"
+  },
+  {
+    "itemId": "2001",
+    "title": "Considering Anne McCaffrey",
+    "startTime": "2026-04-04T09:00:00",
+    "endTime": "2026-04-04T10:00:00",
+    "location": "Sandringham",
+    "description": "A panel looking back at the works and legacy of Anne McCaffrey, her contributions to science fiction and fantasy, and what her Pern and other series mean to readers today.",
+    "day": "Saturday"
+  },
+  {
+    "itemId": "2002",
+    "title": "Appropriation of Greek Culture in the Anglophone World, and How to Reclaim It",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T14:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "An exploration of how Greek myths, philosophy and culture have been adopted and adapted in the English-speaking world, and what it means to reclaim these narratives.",
+    "day": "Saturday"
+  },
+  {
+    "itemId": "2003",
+    "title": "Introduction to Fantasy Kingdoms",
+    "startTime": "2026-04-04T15:00:00",
+    "endTime": "2026-04-04T16:00:00",
+    "location": "Salisbury-Wellington",
+    "description": "A beginner-friendly panel about building and exploring fantasy kingdoms in fiction. How do authors create convincing secondary world polities?",
+    "day": "Saturday"
+  },
+  {
+    "itemId": "3001",
+    "title": "Author Reading: Scott Edelman, Emily Tesh and Wole Talabi",
+    "startTime": "2026-04-05T09:00:00",
+    "endTime": "2026-04-05T10:00:00",
+    "location": "Balmoral",
+    "description": "Readings from Scott Edelman, Emily Tesh and Wole Talabi. Come hear excerpts from their latest and forthcoming works.",
+    "day": "Sunday"
+  },
+  {
+    "itemId": "3002",
+    "title": "Why Writing and Making Tactile Art is Revolutionary",
+    "startTime": "2026-04-05T10:30:00",
+    "endTime": "2026-04-05T11:30:00",
+    "location": "Gladstone-Churchill",
+    "description": "A discussion on the importance of tactile, hands-on creativity in a digital age — why writing by hand and making physical art still matters.",
+    "day": "Sunday"
+  },
+  {
+    "itemId": "3003",
+    "title": "Writing about Darkness in an Ever Darkening World",
+    "startTime": "2026-04-05T13:30:00",
+    "endTime": "2026-04-05T14:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "How do authors write dark fiction when the real world keeps getting darker? A panel on the responsibilities and freedoms of writing about difficult themes.",
+    "day": "Sunday"
+  },
+  {
+    "itemId": "3004",
+    "title": "BSFA Awards Ceremony",
+    "startTime": "2026-04-05T19:00:00",
+    "endTime": "2026-04-05T21:00:00",
+    "location": "Balmoral",
+    "description": "The presentation of the British Science Fiction Association Awards for the best works published in 2025. Categories include Best Novel, Best Shorter Fiction, Best Artwork, Best Non-Fiction and Best Audio Fiction.",
+    "day": "Sunday"
+  },
+  {
+    "itemId": "4001",
+    "title": "Author Reading III: Aliette de Bodard, Robin CM Duncan and Juliet E. McKenna",
+    "startTime": "2026-04-06T10:30:00",
+    "endTime": "2026-04-06T11:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "Readings from Aliette de Bodard, Robin CM Duncan and Juliet E. McKenna. Hear previews of forthcoming works and favourites from their catalogues.",
+    "day": "Monday"
+  },
+  {
+    "itemId": "4002",
+    "title": "The Joy of Podcasts",
+    "startTime": "2026-04-06T12:00:00",
+    "endTime": "2026-04-06T13:00:00",
+    "location": "Gladstone-Churchill",
+    "description": "A celebration of genre podcasts — from fiction podcasts to review shows, interview series and beyond. Panellists discuss their favourites and the art of audio storytelling.",
+    "day": "Monday"
+  },
+  {
+    "itemId": "4003",
+    "title": "Closing Ceremony",
+    "startTime": "2026-04-06T16:00:00",
+    "endTime": "2026-04-06T17:00:00",
+    "location": "Balmoral",
+    "description": "Join us to wrap up Iridescence, the 77th Eastercon. Highlights, thanks, and the traditional handover to next year's convention.",
+    "day": "Monday"
+  }
+]
