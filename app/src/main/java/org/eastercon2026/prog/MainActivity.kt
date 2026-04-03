@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var stateManager: StateManager
     private lateinit var database: AppDatabase
 
+    private val httpClient = OkHttpClient()
+
     private var allEvents: List<Event> = emptyList()
     private var selectedDay: String = DAY_ALL
     private val visibleStates: MutableSet<EventState> = mutableSetOf(
@@ -352,9 +354,8 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val apkFile = withContext(Dispatchers.IO) {
                 try {
-                    val client = OkHttpClient()
                     val request = Request.Builder().url(downloadUrl).build()
-                    val response = client.newCall(request).execute()
+                    val response = httpClient.newCall(request).execute()
                     if (!response.isSuccessful) return@withContext null
                     val file = File(cacheDir, "update.apk")
                     response.body?.byteStream()?.use { input ->
@@ -376,9 +377,10 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
                     data = uri
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
                 }
                 startActivity(intent)
+                // Clean up the cached APK once the installer has been handed the URI
+                apkFile.deleteOnExit()
             } else {
                 Toast.makeText(this@MainActivity, getString(R.string.update_download_failed), Toast.LENGTH_LONG).show()
             }
