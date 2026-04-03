@@ -141,6 +141,9 @@ class MainActivity : AppCompatActivity() {
             val events = withContext(Dispatchers.IO) {
                 ProgrammeFetcher().fetchProgramme { done, total ->
                     lifecycleScope.launch(Dispatchers.Main) {
+                        if (progressBar.isIndeterminate) {
+                            progressBar.isIndeterminate = false
+                        }
                         progressBar.max = total
                         progressBar.progress = done
                         progressText.text = getString(R.string.loading_progress, done, total)

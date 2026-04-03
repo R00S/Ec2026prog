@@ -6,3 +6,14 @@
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn org.jsoup.**
+
+# Gson
+-keepclassmembers,allowobfuscation class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# OkHttp
+-keepnames class okhttp3.** { *; }
+
+# Room
+-keep class androidx.room.** { *; }

@@ -119,16 +119,20 @@ def extract_item_links(soup, page_url):
 def infer_day(start_time_str, page_text=""):
     """Infer the day of week from a date string or page text."""
     if start_time_str:
-        # Try ISO format
-        for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
+        # Strip timezone info and fractional seconds before parsing
+        cleaned = start_time_str.strip().replace("Z", "").split("+")[0].split(".")[0]
+        for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M",
+                    "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
             try:
-                dt = datetime.strptime(start_time_str[:len(fmt) - fmt.count("%") + start_time_str.count(":") + 3], fmt)
+                # Trim input to the expected length for this format to avoid trailing chars
+                expected_len = len(datetime(2000, 1, 1, 0, 0, 0).strftime(fmt))
+                dt = datetime.strptime(cleaned[:expected_len], fmt)
                 date_str = dt.strftime("%Y-%m-%d")
                 if date_str in DATE_TO_DAY:
                     return DATE_TO_DAY[date_str]
                 dow = dt.weekday()
                 return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][dow]
-            except ValueError:
+            except (ValueError, TypeError):
                 continue
 
     # Try day name in text

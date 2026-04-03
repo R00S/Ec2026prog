@@ -37,21 +37,33 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build release APK
-        run: ./gradlew assembleRelease --no-daemon
-
-      - name: Rename APK
+      - name: Set up signing keystore
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          mkdir -p release-artifacts
-          find app/build/outputs/apk/release -name "*.apk" -exec cp {} release-artifacts/Ec2026prog-release.apk \;
+          echo "$KEYSTORE_BASE64" | base64 --decode > app/release.keystore
+
+      - name: Build release APK
+        env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_BASE64 != '' && 'release.keystore' || '' }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Get version name
         id: version
         run: |
-          VERSION=$(./gradlew -q printVersionName 2>/dev/null || grep "versionName" app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/' | head -1)
+          VERSION=$(grep 'versionName' app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/' | head -1)
           echo "version=${VERSION:-1.0.0}" >> "$GITHUB_OUTPUT"
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           echo "tag=v${VERSION:-1.0.0}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Collect APK
+        run: |
+          mkdir -p release-artifacts
+          find app/build/outputs/apk/release -name "*.apk" | head -1 | xargs -I{} cp {} release-artifacts/Ec2026prog-${{ steps.version.outputs.version }}.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -62,9 +74,12 @@ jobs:
             Automated release from commit ${{ github.sha }}
 
             ## Installation
-            Download the APK and install it on your Android device.
-            You may need to enable "Install from unknown sources" in your Android settings.
-          files: release-artifacts/Ec2026prog-release.apk
+            1. Download the APK below.
+            2. On your Android device, go to **Settings → Security** (or **Apps → Special app access**) and enable **Install unknown apps** for your browser or file manager.
+            3. Open the downloaded APK and tap **Install**.
+
+            Requires Android 8.0 (API 26) or later.
+          files: release-artifacts/Ec2026prog-${{ steps.version.outputs.version }}.apk
           draft: false
           prerelease: false
         env:
