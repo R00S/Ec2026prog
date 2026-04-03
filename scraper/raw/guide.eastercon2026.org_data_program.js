@@ -4652,7 +4652,8 @@
             "desc": "<p>Novelist and writing teacher Tiffani Angus guides you through the ins and outs of creating plausible, interested haunted, cursed and possessed items for your sff stories.<\/p>",
             "links": {
                 "streaming": "https:\/\/portal.eastercon2026.org\/deep-link\/stream?room_id=Salisbury-Wellington",
-                "replay": "https:\/\/portal.eastercon2026.org\/deep-link\/replay?item_id=1129"
+                "replay": "https:\/\/portal.eastercon2026.org\/deep-link\/replay?item_id=1129",
+                "signup": "https:\/\/portal.eastercon2026.org\/sign-ups#creating-haunted-cursed-and-possessed-items"
             }
         },
         {
