@@ -5,20 +5,29 @@
     "startTime": "2026-04-03T14:00:00",
     "endTime": "2026-04-03T15:00:00",
     "location": "Balmoral",
-    "description": "Welcome to Iridescence – the 77th Eastercon! Join us as we officially open the convention with our Guests of Honour: R. J. Barker, Emma Newman, Karen Lord, and fan guests Serena Culfeather and John Wilson.",
+    "description": "Welcome to Iridescence \u2013 the 77th Eastercon! Join us as we officially open the convention with our Guests of Honour: R. J. Barker, Emma Newman, Karen Lord, and fan guests Serena Culfeather and John Wilson.",
     "day": "Friday"
   },
   {
     "itemId": "1002",
-    "title": "Book Launch: Wizard's Tower Press",
-    "startTime": "2026-04-03T16:30:00",
-    "endTime": "2026-04-03T17:30:00",
-    "location": "Sussex",
-    "description": "Wizard's Tower Press presents their latest titles. Join the authors for readings, discussion and book signing.",
+    "title": "SFF and Trans History",
+    "startTime": "2026-04-03T15:00:00",
+    "endTime": "2026-04-03T16:00:00",
+    "location": "Pavilion",
+    "description": "A discussion of the history of trans people and science fiction and fantasy, and how these genres have challenged contemporary ideas of gender through both creators and works. Panelists: Sandra Bond, Nick Hubble, Joel Cornah, duckbunny, and Cheryl Morgan.",
     "day": "Friday"
   },
   {
     "itemId": "1003",
+    "title": "Book Launch: Wizard's Tower Press",
+    "startTime": "2026-04-03T16:30:00",
+    "endTime": "2026-04-03T17:30:00",
+    "location": "Sussex",
+    "description": "Wizard's Tower Press presents their latest titles. Join the authors for readings, discussion and book signing. Featuring Cheryl Morgan and Juliet E. McKenna.",
+    "day": "Friday"
+  },
+  {
+    "itemId": "1004",
     "title": "Obsidian Book Launch",
     "startTime": "2026-04-03T19:30:00",
     "endTime": "2026-04-03T20:30:00",
@@ -32,25 +41,52 @@
     "startTime": "2026-04-04T09:00:00",
     "endTime": "2026-04-04T10:00:00",
     "location": "Sandringham",
-    "description": "A panel looking back at the works and legacy of Anne McCaffrey, her contributions to science fiction and fantasy, and what her Pern and other series mean to readers today.",
+    "description": "A panel looking back at the works and legacy of Anne McCaffrey, her contributions to science fiction and fantasy, and what her Pern and other series mean to readers today. Featuring Juliet E. McKenna.",
     "day": "Saturday"
   },
   {
     "itemId": "2002",
-    "title": "Appropriation of Greek Culture in the Anglophone World, and How to Reclaim It",
-    "startTime": "2026-04-04T13:30:00",
-    "endTime": "2026-04-04T14:30:00",
-    "location": "Salisbury-Wellington",
-    "description": "An exploration of how Greek myths, philosophy and culture have been adopted and adapted in the English-speaking world, and what it means to reclaim these narratives.",
+    "title": "Fanzines in the 21st Century",
+    "startTime": "2026-04-04T09:00:00",
+    "endTime": "2026-04-04T10:00:00",
+    "location": "Pavilion",
+    "description": "Exploring the creation, sharing, and enduring appeal of fanzines in the age of microblogging and BookTok. How are fanzines made and what challenges do they face today? Panelists: Alison Scott, Roseanna Pendlebury, Sandra Bond, Tommy Ferguson, and Cheryl Morgan.",
     "day": "Saturday"
   },
   {
     "itemId": "2003",
+    "title": "Appropriation of Greek Culture in the Anglophone World, and How to Reclaim It",
+    "startTime": "2026-04-04T13:30:00",
+    "endTime": "2026-04-04T14:30:00",
+    "location": "Salisbury-Wellington",
+    "description": "An exploration of how Greek myths, philosophy and culture have been adopted and adapted in the English-speaking world, and what it means to reclaim these narratives. Featuring Juliet E. McKenna.",
+    "day": "Saturday"
+  },
+  {
+    "itemId": "2004",
     "title": "Introduction to Fantasy Kingdoms",
     "startTime": "2026-04-04T15:00:00",
     "endTime": "2026-04-04T16:00:00",
     "location": "Salisbury-Wellington",
-    "description": "A beginner-friendly panel about building and exploring fantasy kingdoms in fiction. How do authors create convincing secondary world polities?",
+    "description": "A beginner-friendly panel about building and exploring fantasy kingdoms in fiction. How do authors create convincing secondary world polities? Featuring Juliet E. McKenna.",
+    "day": "Saturday"
+  },
+  {
+    "itemId": "2005",
+    "title": "My Flesh is False \u2013 SF Poetry Show",
+    "startTime": "2026-04-04T19:30:00",
+    "endTime": "2026-04-04T20:30:00",
+    "location": "Sandringham",
+    "description": "Andrew Wallace presents sci-fi poetry from his new collection 'A.D.H.DAYS'. A live performance exploring science fiction themes through verse.",
+    "day": "Saturday"
+  },
+  {
+    "itemId": "2006",
+    "title": "Disco",
+    "startTime": "2026-04-04T21:00:00",
+    "endTime": "2026-04-04T23:59:00",
+    "location": "Balmoral",
+    "description": "The Saturday night disco, a beloved Eastercon tradition. DJ set by Mike Brooks.",
     "day": "Saturday"
   },
   {
@@ -68,7 +104,7 @@
     "startTime": "2026-04-05T10:30:00",
     "endTime": "2026-04-05T11:30:00",
     "location": "Gladstone-Churchill",
-    "description": "A discussion on the importance of tactile, hands-on creativity in a digital age — why writing by hand and making physical art still matters.",
+    "description": "A discussion on the importance of tactile, hands-on creativity in a digital age \u2014 why writing by hand and making physical art still matters. Panelists: Scott Edelman, Tiffani Angus, Aliette de Bodard, Nikita Andester, and Penny Hill.",
     "day": "Sunday"
   },
   {
@@ -77,7 +113,7 @@
     "startTime": "2026-04-05T13:30:00",
     "endTime": "2026-04-05T14:30:00",
     "location": "Salisbury-Wellington",
-    "description": "How do authors write dark fiction when the real world keeps getting darker? A panel on the responsibilities and freedoms of writing about difficult themes.",
+    "description": "How do authors write dark fiction when the real world keeps getting darker? A panel on the responsibilities and freedoms of writing about difficult themes. Panelists: Scott Edelman, David Ketelby, Emily Inkpen, Justin Lee Anderson, and Anna Smith Spark.",
     "day": "Sunday"
   },
   {
@@ -86,7 +122,7 @@
     "startTime": "2026-04-05T19:00:00",
     "endTime": "2026-04-05T21:00:00",
     "location": "Balmoral",
-    "description": "The presentation of the British Science Fiction Association Awards for the best works published in 2025. Categories include Best Novel, Best Shorter Fiction, Best Artwork, Best Non-Fiction and Best Audio Fiction.",
+    "description": "The presentation of the British Science Fiction Association Awards for the best works published in 2025. Categories include Best Novel, Best Shorter Fiction, Best Artwork, Best Non-Fiction and Best Audio Fiction. Hosted by Stewart Hotston.",
     "day": "Sunday"
   },
   {
@@ -104,11 +140,20 @@
     "startTime": "2026-04-06T12:00:00",
     "endTime": "2026-04-06T13:00:00",
     "location": "Gladstone-Churchill",
-    "description": "A celebration of genre podcasts — from fiction podcasts to review shows, interview series and beyond. Panellists discuss their favourites and the art of audio storytelling.",
+    "description": "A celebration of genre podcasts \u2014 from fiction podcasts to review shows, interview series and beyond. Panelists: Scott Edelman, Michael Ireland, Robin C.M. Duncan, Kat Kourbeti, and Devin Martin.",
     "day": "Monday"
   },
   {
     "itemId": "4003",
+    "title": "Folklore, Cultures, and the Modern Fantastic: Adapting Myth",
+    "startTime": "2026-04-06T13:30:00",
+    "endTime": "2026-04-06T14:30:00",
+    "location": "Sandringham",
+    "description": "How writers and artists have used and misused folklores and myths. Discussing good and bad practices in adapting myth for modern creative works. Panelists: Kat Kourbeti, M E Moirin, Johannes T Evans, Charles Stross, and Cheryl Morgan.",
+    "day": "Monday"
+  },
+  {
+    "itemId": "4004",
     "title": "Closing Ceremony",
     "startTime": "2026-04-06T16:00:00",
     "endTime": "2026-04-06T17:00:00",
