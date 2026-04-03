@@ -85,13 +85,20 @@ def try_grenadine_api():
         if resp is None:
             continue
         ct = resp.headers.get("content-type", "")
-        if "json" not in ct and not resp.text.strip().startswith("["):
+        text = resp.text.strip()
+        # Accept JSON arrays OR JSON objects (the latter may wrap the list)
+        if "json" not in ct and not text.startswith("[") and not text.startswith("{"):
             continue
         try:
             data = resp.json()
             if isinstance(data, list) and len(data) > 0:
                 print(f"Got {len(data)} items from Grenadine API", file=sys.stderr)
                 return data
+            if isinstance(data, dict):
+                for key in ("programme", "program", "items", "events", "data", "sessions"):
+                    if key in data and isinstance(data[key], list) and data[key]:
+                        print(f"Got {len(data[key])} items from Grenadine API (key={key})", file=sys.stderr)
+                        return data[key]
         except Exception as e:
             print(f"JSON parse error for {url}: {e}", file=sys.stderr)
     return None
@@ -142,6 +149,8 @@ def try_json_api():
         f"{BASE_URL}/events.json",
         f"{BASE_URL}/data/events.json",
         f"{BASE_URL}/api/items",
+        f"{BASE_URL}/api/schedule",
+        f"{BASE_URL}/schedule.json",
     ]
     for url in candidates:
         print(f"Trying JSON endpoint: {url}", file=sys.stderr)
@@ -149,7 +158,8 @@ def try_json_api():
         if resp is None:
             continue
         ct = resp.headers.get("content-type", "")
-        if "json" not in ct and not resp.text.strip().startswith("[") and not resp.text.strip().startswith("{"):
+        text = resp.text.strip()
+        if "json" not in ct and not text.startswith("[") and not text.startswith("{"):
             continue
         try:
             data = resp.json()
@@ -157,7 +167,7 @@ def try_json_api():
                 print(f"Got {len(data)} items from {url}", file=sys.stderr)
                 return data
             if isinstance(data, dict):
-                for key in ("events", "programme", "items", "data"):
+                for key in ("events", "programme", "items", "data", "sessions", "schedule"):
                     if key in data and isinstance(data[key], list):
                         print(f"Got {len(data[key])} items from {url} (key={key})", file=sys.stderr)
                         return data[key]
@@ -326,6 +336,40 @@ def normalise_json_item(raw):
     }
 
 
+def try_extract_from_page_scripts(soup):
+    """Try to extract programme data embedded as JSON in page script tags.
+
+    Many SPA/React convention guide sites pre-render or embed their data as
+    a JavaScript variable or inline JSON in a <script> tag.
+    """
+    patterns = [
+        # var programme = [...]  or  window.programme = [...]
+        re.compile(r'(?:var|let|const|window\.)\s*(?:programme|program|events?|schedule|items?)\s*=\s*(\[.*?\])\s*[;,]', re.DOTALL | re.IGNORECASE),
+        # {"programme": [...]}  or similar top-level object
+        re.compile(r'(?:var|let|const|window\.)\s*\w+\s*=\s*(\{.*?\})\s*[;,]', re.DOTALL),
+    ]
+    for script in soup.find_all("script"):
+        text = script.get_text()
+        if not text:
+            continue
+        for pattern in patterns:
+            for match in pattern.finditer(text):
+                try:
+                    data = json.loads(match.group(1))
+                    if isinstance(data, list) and len(data) > 5:
+                        # Looks like a real list of events
+                        print(f"Extracted {len(data)} items from script tag", file=sys.stderr)
+                        return data
+                    if isinstance(data, dict):
+                        for key in ("programme", "program", "events", "items", "sessions"):
+                            if key in data and isinstance(data[key], list) and len(data[key]) > 5:
+                                print(f"Extracted {len(data[key])} items from script tag (key={key})", file=sys.stderr)
+                                return data[key]
+                except (json.JSONDecodeError, ValueError):
+                    continue
+    return None
+
+
 def scrape_html():
     """Scrape programme by fetching the main page and following item links."""
     print(f"Fetching main page: {BASE_URL}", file=sys.stderr)
@@ -334,12 +378,22 @@ def scrape_html():
         return None
 
     soup = BeautifulSoup(resp.text, "lxml")
+
+    # Try extracting JSON data embedded in script tags first
+    script_data = try_extract_from_page_scripts(soup)
+    if script_data:
+        events = [normalise_grenadine_item(item) for item in script_data]
+        events = [e for e in events if e["title"]]
+        if events:
+            return events
+
     links = extract_item_links(soup, BASE_URL)
     print(f"Found {len(links)} item links", file=sys.stderr)
 
     if not links:
         print("No item links found - trying broader extraction", file=sys.stderr)
         base_host = urlparse(BASE_URL).netloc
+        broader = set()
         for a in soup.find_all("a", href=True):
             abs_href = urljoin(BASE_URL, a["href"])
             parsed = urlparse(abs_href)
@@ -347,8 +401,8 @@ def scrape_html():
             if (parsed.netloc == base_host and path and path != "/"
                     and not path.endswith((".css", ".js", ".png", ".jpg"))
                     and "#" not in path):
-                links.add(abs_href.split("?")[0].split("#")[0])
-        links = sorted(links)
+                broader.add(abs_href.split("?")[0].split("#")[0])
+        links = sorted(broader)
         print(f"Broader extraction found {len(links)} links", file=sys.stderr)
 
     if not links:
@@ -361,6 +415,7 @@ def scrape_html():
         if detail_resp is None:
             continue
         detail_soup = BeautifulSoup(detail_resp.text, "lxml")
+        # Also try script-tag extraction on detail pages
         event = parse_detail_page(link, detail_soup)
         if event["title"]:
             events.append(event)

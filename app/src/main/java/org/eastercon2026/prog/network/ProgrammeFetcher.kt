@@ -1,8 +1,10 @@
 package org.eastercon2026.prog.network
 
 import android.util.Log
+import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.eastercon2026.prog.model.Event
@@ -24,9 +26,20 @@ class ProgrammeFetcher {
     private val baseUrl = "https://guide.eastercon2026.org"
 
     fun fetchProgramme(progressCallback: ((Int, Int) -> Unit)? = null): List<Event> {
-        Log.d(TAG, "Starting programme fetch from $baseUrl")
+        Log.d(TAG, "Starting programme fetch")
 
-        // Try Grenadine program.json API first (used by convention guide sites)
+        // Try fetching the latest programme.json from the GitHub repository first.
+        // This is the most reliable source because the scraper CI action keeps it up to date.
+        val githubEvents = tryGitHubRaw()
+        if (githubEvents.isNotEmpty()) {
+            Log.d(TAG, "Got ${githubEvents.size} events from GitHub raw")
+            progressCallback?.invoke(githubEvents.size, githubEvents.size)
+            return githubEvents
+        }
+
+        Log.d(TAG, "GitHub raw fetch failed, trying live site $baseUrl")
+
+        // Try Grenadine program.json API (used by convention guide sites)
         val grenadineEvents = tryGrenadineApi()
         if (grenadineEvents.isNotEmpty()) {
             Log.d(TAG, "Got ${grenadineEvents.size} events from Grenadine API")
@@ -44,6 +57,30 @@ class ProgrammeFetcher {
 
         // Fall back to HTML scraping
         return scrapeHtml(progressCallback)
+    }
+
+    // ── GitHub raw programme.json ────────────────────────────────────────
+
+    private fun tryGitHubRaw(): List<Event> {
+        val url = "https://raw.githubusercontent.com/R00S/Ec2026prog/main/app/src/main/assets/programme.json"
+        Log.d(TAG, "Trying GitHub raw: $url")
+        return try {
+            val request = Request.Builder().url(url)
+                .header("Accept", "application/json")
+                .build()
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) {
+                Log.w(TAG, "GitHub raw returned HTTP ${response.code}")
+                return emptyList()
+            }
+            val body = response.body?.string() ?: return emptyList()
+            val type = object : TypeToken<List<Event>>() {}.type
+            val events: List<Event> = Gson().fromJson(body, type) ?: emptyList()
+            events
+        } catch (e: Exception) {
+            Log.w(TAG, "GitHub raw fetch failed: ${e.message}")
+            emptyList()
+        }
     }
 
     // ── Grenadine program.json API ───────────────────────────────────────
