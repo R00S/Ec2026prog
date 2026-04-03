@@ -75,6 +75,13 @@ def fetch(url, **kwargs):
         return None
 
 
+def _log_non_json(url, resp):
+    """Log what a URL actually returned when it wasn't usable JSON."""
+    ct = resp.headers.get("content-type", "(no content-type)")
+    preview = resp.text.strip()[:120].replace("\n", " ")
+    print(f"  {url} -> {resp.status_code} [{ct}] {preview!r}", file=sys.stderr)
+
+
 def try_grenadine_api():
     """Try Grenadine program.json API endpoint (used by convention guide sites).
 
@@ -93,6 +100,7 @@ def try_grenadine_api():
         text = resp.text.strip()
         # Accept JSON arrays OR JSON objects (the latter may wrap the list)
         if "json" not in ct and not text.startswith("[") and not text.startswith("{"):
+            _log_non_json(url, resp)
             continue
         try:
             data = resp.json()
@@ -216,6 +224,7 @@ def try_json_api():
         ct = resp.headers.get("content-type", "")
         text = resp.text.strip()
         if "json" not in ct and not text.startswith("[") and not text.startswith("{"):
+            _log_non_json(url, resp)
             continue
         try:
             data = resp.json()
@@ -293,74 +302,93 @@ def try_planz_api():
 
 
 def try_js_bundle_config():
-    """Find PROGRAM_DATA_URL baked into the React JS bundle and fetch programme.
+    """Find programme data URL baked into the React/SPA JS bundle and fetch programme.
 
-    ConClár is a React SPA whose config (including PROGRAM_DATA_URL) is
-    compiled into the JS bundle.  We fetch the HTML, find the main JS chunk,
-    extract the config URL, then fetch the actual programme data.
+    ConClár and similar React SPAs compile their config (including the data URL)
+    into the JS bundle.  We fetch the HTML, collect every JS file reference, search
+    each bundle for known variable names, then fetch the actual programme data.
+
+    Variable names tried (in order of likelihood):
+      PROGRAM_DATA_URL, REACT_APP_DATA_URL, PROGRAM_URL, DATA_URL,
+      programDataUrl, dataUrl, scheduleUrl, programUrl
     """
     resp = fetch(BASE_URL)
     if resp is None:
         return None
 
     soup = BeautifulSoup(resp.text, "lxml")
+    print(f"Page title: {soup.title.get_text(strip=True) if soup.title else '(none)'}", file=sys.stderr)
 
-    # Collect candidate JS bundle URLs from <script src="..."> tags
+    # Collect candidate JS bundle URLs from <script src> and <link rel=modulepreload>
     script_srcs = []
     for script in soup.find_all("script", src=True):
         src = script.get("src", "")
         abs_src = urljoin(BASE_URL, src)
         if urlparse(abs_src).netloc != urlparse(BASE_URL).netloc:
             continue
-        # Prioritise React build artefacts
-        if any(p in abs_src for p in ("static/js", "main.", "chunk.js", ".bundle.js")):
+        if any(p in abs_src for p in ("static/js", "main.", "chunk.js", ".bundle.js", "app.", "index.")):
             script_srcs.insert(0, abs_src)
         else:
             script_srcs.append(abs_src)
+    for link in soup.find_all("link", rel=True):
+        rel = link.get("rel", [])
+        if isinstance(rel, list):
+            rel = " ".join(rel)
+        if "modulepreload" in rel or "preload" in rel:
+            href = link.get("href", "")
+            if href.endswith(".js"):
+                abs_href = urljoin(BASE_URL, href)
+                if urlparse(abs_href).netloc == urlparse(BASE_URL).netloc:
+                    script_srcs.append(abs_href)
 
-    # Also scan inline <script> blocks for the config value
+    print(f"JS bundle candidates: {len(script_srcs)}", file=sys.stderr)
+    for s in script_srcs[:10]:
+        print(f"  {s}", file=sys.stderr)
+
+    # Also scan inline <script> blocks
     all_scripts_text = " ".join(
         s.get_text() for s in soup.find_all("script") if not s.get("src")
     )
 
-    def _find_and_fetch_data_url(js_text):
-        """Search js_text for PROGRAM_DATA_URL and fetch the pointed-to data."""
-        # Matches: "PROGRAM_DATA_URL":"...", PROGRAM_DATA_URL:"...", etc.
-        match = re.search(
-            r'PROGRAM_DATA_URL["\']?\s*[:=]\s*["\']([^"\']+)["\']', js_text
-        )
-        if not match:
-            # Alternate quoting style in minified bundles: PROGRAM_DATA_URL<separator>"<url>"
-            # Require at least 4 chars to avoid matching empty or placeholder values like '""'
-            match = re.search(
-                r'PROGRAM_DATA_URL[^"\']{0,5}["\']([^"\']{4,})["\']', js_text
-            )
+    # Pattern: any of the known variable names followed by a URL value
+    data_url_re = re.compile(
+        r'(?:PROGRAM_DATA_URL|REACT_APP_DATA_URL|PROGRAM_URL|DATA_URL'
+        r'|programDataUrl|dataUrl|scheduleUrl|programUrl)'
+        r'["\']?\s*[:=]\s*["\']([^"\']{4,})["\']',
+        re.IGNORECASE,
+    )
+
+    def _find_and_fetch_data_url(js_text, source_label):
+        """Search js_text for a data URL and fetch it."""
+        match = data_url_re.search(js_text)
         if not match:
             return None
         data_url = match.group(1)
         if not data_url.startswith("http"):
             data_url = urljoin(BASE_URL, data_url)
-        print(f"  Found PROGRAM_DATA_URL: {data_url}", file=sys.stderr)
+        print(f"  Found data URL in {source_label}: {data_url}", file=sys.stderr)
         data_resp = fetch(data_url)
         if data_resp is None:
             return None
         return _parse_planz_response(data_resp.text, data_url)
 
     # Try inline scripts first (cheap)
-    if "PROGRAM_DATA_URL" in all_scripts_text:
-        result = _find_and_fetch_data_url(all_scripts_text)
-        if result:
-            return result
+    result = _find_and_fetch_data_url(all_scripts_text, "inline scripts")
+    if result:
+        return result
 
-    # Search JS bundles (up to 5 to avoid excessive requests)
-    for js_url in script_srcs[:5]:
-        print(f"Searching JS bundle for config: {js_url}", file=sys.stderr)
+    # Search JS bundles (up to 10 to be thorough)
+    for js_url in script_srcs[:10]:
+        print(f"Searching JS bundle: {js_url}", file=sys.stderr)
         js_resp = fetch(js_url)
         if js_resp is None:
             continue
-        if "PROGRAM_DATA_URL" not in js_resp.text:
+        # Check for any of the known patterns before downloading fully
+        found = data_url_re.search(js_resp.text)
+        if not found:
+            print(f"  No data URL pattern found in bundle", file=sys.stderr)
             continue
-        result = _find_and_fetch_data_url(js_resp.text)
+        result = _find_and_fetch_data_url(js_resp.text, js_url)
         if result:
             return result
 
