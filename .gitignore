@@ -12,6 +12,7 @@ app/build/
 *.apk
 *.aab
 *.keystore
+!app/app-release.keystore
 __pycache__/
 scraper/__pycache__/
 scraper/*.pyc
