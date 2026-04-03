@@ -24,6 +24,12 @@ class VersionChecker {
         "https://api.github.com/repos/R00S/Ec2026prog/releases/latest"
 
     fun checkForUpdate(currentVersion: String): VersionInfo? {
+        val info = getLatestRelease() ?: return null
+        val latestVersion = info.tagName.trimStart('v')
+        return if (isNewer(latestVersion, currentVersion)) info else null
+    }
+
+    fun getLatestRelease(): VersionInfo? {
         return try {
             val request = Request.Builder()
                 .url(releasesUrl)
@@ -41,20 +47,14 @@ class VersionChecker {
             val name = json.get("name")?.asString ?: tagName
             val htmlUrl = json.get("html_url")?.asString ?: ""
 
-            // Find APK asset download URL
             val downloadUrl = json.getAsJsonArray("assets")
                 ?.firstOrNull { it.asJsonObject.get("name")?.asString?.endsWith(".apk") == true }
                 ?.asJsonObject?.get("browser_download_url")?.asString
                 ?: htmlUrl
 
-            val latestVersion = tagName.trimStart('v')
-            if (isNewer(latestVersion, currentVersion)) {
-                VersionInfo(tagName, name, htmlUrl, downloadUrl)
-            } else {
-                null
-            }
+            VersionInfo(tagName, name, htmlUrl, downloadUrl)
         } catch (e: Exception) {
-            Log.w(TAG, "Version check failed: ${e.message}")
+            Log.w(TAG, "getLatestRelease failed: ${e.message}")
             null
         }
     }

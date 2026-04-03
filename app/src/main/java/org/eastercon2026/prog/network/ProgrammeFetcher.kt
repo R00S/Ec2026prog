@@ -17,6 +17,10 @@ import java.util.concurrent.TimeUnit
 
 class ProgrammeFetcher {
 
+    /** Human-readable label for the source that provided events in the last [fetchProgramme] call. */
+    var lastSource: String = "unknown"
+        private set
+
     private val client = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
@@ -33,16 +37,27 @@ class ProgrammeFetcher {
         val githubEvents = tryGitHubRaw()
         if (githubEvents.isNotEmpty()) {
             Log.d(TAG, "Got ${githubEvents.size} events from GitHub raw")
+            lastSource = "GitHub (CI scraper)"
             progressCallback?.invoke(githubEvents.size, githubEvents.size)
             return githubEvents
         }
 
         Log.d(TAG, "GitHub raw fetch failed, trying live site $baseUrl")
 
-        // Try Grenadine program.json API (used by convention guide sites)
+        // Try PlanZ/KonOpas API – the primary format used by Eastercon 2026
+        val planzEvents = tryPlanzApi()
+        if (planzEvents.isNotEmpty()) {
+            Log.d(TAG, "Got ${planzEvents.size} events from PlanZ API")
+            lastSource = "PlanZ live (guide.eastercon2026.org)"
+            progressCallback?.invoke(planzEvents.size, planzEvents.size)
+            return planzEvents
+        }
+
+        // Try Grenadine program.json API (used by some convention guide sites)
         val grenadineEvents = tryGrenadineApi()
         if (grenadineEvents.isNotEmpty()) {
             Log.d(TAG, "Got ${grenadineEvents.size} events from Grenadine API")
+            lastSource = "Grenadine API"
             progressCallback?.invoke(grenadineEvents.size, grenadineEvents.size)
             return grenadineEvents
         }
@@ -51,11 +66,13 @@ class ProgrammeFetcher {
         val jsonEvents = tryJsonApis()
         if (jsonEvents.isNotEmpty()) {
             Log.d(TAG, "Got ${jsonEvents.size} events from JSON API")
+            lastSource = "Generic JSON API"
             progressCallback?.invoke(jsonEvents.size, jsonEvents.size)
             return jsonEvents
         }
 
         // Fall back to HTML scraping
+        lastSource = "HTML scraping"
         return scrapeHtml(progressCallback)
     }
 
@@ -80,6 +97,122 @@ class ProgrammeFetcher {
             Log.w(TAG, "GitHub raw fetch failed: ${e.message}")
             emptyList()
         }
+    }
+
+    // ── PlanZ / KonOpas API (primary source for Eastercon 2026) ─────────
+
+    private fun tryPlanzApi(): List<Event> {
+        val urls = listOf(
+            "$baseUrl/data/program.js",
+            "$baseUrl/konOpas.php",
+            "$baseUrl/webpages/konOpas.php",
+            "$baseUrl/cap/program.js",
+            "$baseUrl/program.js"
+        )
+        for (url in urls) {
+            Log.d(TAG, "Trying PlanZ endpoint: $url")
+            try {
+                val request = Request.Builder().url(url).build()
+                val response = client.newCall(request).execute()
+                if (!response.isSuccessful) continue
+                val body = response.body?.string() ?: continue
+                val items = parsePlanzResponse(body) ?: continue
+                if (items.isNotEmpty()) {
+                    Log.d(TAG, "Got ${items.size} items from PlanZ at $url")
+                    return parsePlanzItems(items)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "PlanZ fetch failed for $url: ${e.message}")
+            }
+        }
+        return emptyList()
+    }
+
+    /**
+     * Extract the programme list from a PlanZ/KonOpas response.
+     * Handles three formats:
+     *   1. JSON object:  {"program": […], "people": […]}
+     *   2. JSON array:   [{…}, …]
+     *   3. JS variable:  var program = […]; var people = […];
+     */
+    private fun parsePlanzResponse(text: String): JsonArray? {
+        val trimmed = text.trim()
+        try {
+            // Format 3: JS variable assignment – var program = [...]
+            val jsMatch = Regex("""var\s+program\s*=\s*""").find(trimmed)
+            if (jsMatch != null) {
+                val start = jsMatch.range.last + 1
+                if (start < trimmed.length && (trimmed[start] == '[' || trimmed[start] == '{')) {
+                    // Find the matching closing bracket
+                    val sub = trimmed.substring(start)
+                    // Strip everything from the next JS variable declaration onwards
+                    val cleaned = sub.replace(Regex(";\\s*\nvar .*", RegexOption.DOT_MATCHES_ALL), "")
+                        .trimEnd(';', '\n', '\r', ' ')
+                    val el = JsonParser.parseString(cleaned)
+                    if (el.isJsonArray && el.asJsonArray.size() > 0) return el.asJsonArray
+                }
+            }
+            // Format 1 & 2: plain JSON
+            if (!trimmed.startsWith("[") && !trimmed.startsWith("{")) return null
+            val el = JsonParser.parseString(trimmed)
+            if (el.isJsonArray && el.asJsonArray.size() > 0) return el.asJsonArray
+            if (el.isJsonObject) {
+                for (key in listOf("program", "programme", "events", "items", "sessions")) {
+                    val arr = el.asJsonObject.getAsJsonArray(key)
+                    if (arr != null && arr.size() > 0) return arr
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "parsePlanzResponse error: ${e.message}")
+        }
+        return null
+    }
+
+    private fun parsePlanzItems(array: JsonArray): List<Event> {
+        return array.mapNotNull { element ->
+            try {
+                val obj = element.asJsonObject
+                val itemId = obj.get("id")?.asString ?: return@mapNotNull null
+                val title = obj.get("title")?.asString?.trim()
+                    ?.takeIf { it.isNotEmpty() } ?: return@mapNotNull null
+
+                // PlanZ stores date and time separately; compute end from mins
+                val date = obj.get("date")?.asString ?: ""
+                val timeStr = obj.get("time")?.asString ?: ""
+                val mins = obj.get("mins")?.asString?.toIntOrNull() ?: 0
+
+                val startTime: String
+                val endTime: String
+                if (date.isNotEmpty() && timeStr.isNotEmpty()) {
+                    startTime = "${date}T${timeStr}:00"
+                    endTime = try {
+                        val fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                        val startDt = LocalDateTime.parse(startTime, fmt)
+                        startDt.plusMinutes(mins.toLong())
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                    } catch (e: Exception) { "" }
+                } else {
+                    startTime = obj.get("datetime")?.asString ?: ""
+                    endTime = ""
+                }
+
+                val location = try {
+                    val loc = obj.getAsJsonArray("loc")
+                    loc?.firstOrNull()?.asString ?: ""
+                } catch (e: Exception) {
+                    obj.get("location")?.asString ?: ""
+                }
+
+                val descRaw = obj.get("desc")?.asString
+                    ?: obj.get("description")?.asString ?: ""
+                val description = if (descRaw.contains("<")) {
+                    Jsoup.parse(descRaw).text()
+                } else {
+                    descRaw
+                }
+
+                val day = inferDay(startTime, "" /* no extra page text; day is inferred from startTime date */)
+                Event(itemId, title, startTime, endTime, location, description, day)
     }
 
     // ── Grenadine program.json API ───────────────────────────────────────
@@ -133,7 +266,7 @@ class ProgrammeFetcher {
                     descRaw
                 }
 
-                val day = inferDay(startTime, "")
+                val day = inferDay(startTime, "" /* no extra page text; day is inferred from startTime date */)
 
                 Event(itemId, title, startTime, endTime, location, description, day)
             } catch (e: Exception) {

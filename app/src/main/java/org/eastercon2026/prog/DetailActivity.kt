@@ -10,6 +10,10 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import org.eastercon2026.prog.model.EventState
 import org.eastercon2026.prog.util.StateManager
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.util.Locale
 
 class DetailActivity : AppCompatActivity() {
 
@@ -109,8 +113,37 @@ class DetailActivity : AppCompatActivity() {
 
     private fun buildTimeString(startTime: String, endTime: String): String {
         if (startTime.isEmpty()) return ""
-        val end = if (endTime.isNotEmpty()) " – $endTime" else ""
-        return "$startTime$end"
+        val startDt = parseDateTime(startTime)
+        return if (startDt != null) {
+            val datePart = startDt.format(DateTimeFormatter.ofPattern("EEE d MMM", Locale.ENGLISH))
+            val startHhmm = startDt.format(DateTimeFormatter.ofPattern("HH:mm"))
+            if (endTime.isNotEmpty()) {
+                val endDt = parseDateTime(endTime)
+                val endHhmm = endDt?.format(DateTimeFormatter.ofPattern("HH:mm"))
+                    ?: endTime.take(5)
+                "$datePart · $startHhmm – $endHhmm"
+            } else {
+                "$datePart · $startHhmm"
+            }
+        } else {
+            // Fallback: just strip the T separator for readability
+            val end = if (endTime.isNotEmpty()) " – ${endTime.replace('T', ' ').take(16)}" else ""
+            "${startTime.replace('T', ' ').take(16)}$end"
+        }
+    }
+
+    private fun parseDateTime(value: String): LocalDateTime? {
+        val parsers = listOf(
+            DateTimeFormatter.ISO_DATE_TIME,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        )
+        for (fmt in parsers) {
+            try { return LocalDateTime.parse(value, fmt) } catch (e: DateTimeParseException) { /* try next */ }
+        }
+        return null
     }
 
     companion object {

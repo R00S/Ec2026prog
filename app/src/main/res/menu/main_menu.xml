@@ -7,6 +7,10 @@
         android:icon="@android:drawable/ic_menu_rotate"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_about"
+        android:title="@string/action_about"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_buy_coffee"
         android:title="@string/action_buy_coffee"
         app:showAsAction="never" />
