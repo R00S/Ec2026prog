@@ -12,12 +12,20 @@ android {
         applicationId = "org.eastercon2026.prog"
         minSdk = 26
         targetSdk = 35
-        versionCode = 5
-        versionName = "1.4.0"
+        versionCode = 6
+        versionName = "1.5.0"
     }
 
     signingConfigs {
-        // Optional release signing via environment variables set by CI
+        // Stable app keystore committed to the repo – ensures consistent APK signing
+        // so users can install updates over existing installs without uninstalling first.
+        create("appRelease") {
+            storeFile = file("app-release.keystore")
+            storePassword = "eastercon2026"
+            keyAlias = "ec2026prog"
+            keyPassword = "eastercon2026"
+        }
+        // Optional override via CI secrets for a production release key
         val keystoreFile = System.getenv("KEYSTORE_FILE")
         if (!keystoreFile.isNullOrEmpty()) {
             create("release") {
@@ -40,7 +48,7 @@ android {
             signingConfig = if (!keystoreFile.isNullOrEmpty()) {
                 signingConfigs.getByName("release")
             } else {
-                signingConfigs.getByName("debug")
+                signingConfigs.getByName("appRelease")
             }
         }
         debug {

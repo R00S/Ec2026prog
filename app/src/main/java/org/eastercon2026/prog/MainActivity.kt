@@ -10,9 +10,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +26,8 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.eastercon2026.prog.adapter.EventAdapter
 import org.eastercon2026.prog.db.AppDatabase
 import org.eastercon2026.prog.db.EventEntity
@@ -32,6 +36,7 @@ import org.eastercon2026.prog.model.EventState
 import org.eastercon2026.prog.network.ProgrammeFetcher
 import org.eastercon2026.prog.network.VersionChecker
 import org.eastercon2026.prog.util.StateManager
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -47,6 +52,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var emptyView: TextView
     private lateinit var stateManager: StateManager
     private lateinit var database: AppDatabase
+
+    private val httpClient = OkHttpClient()
 
     private var allEvents: List<Event> = emptyList()
     private var selectedDay: String = DAY_ALL
@@ -331,12 +338,53 @@ class MainActivity : AppCompatActivity() {
             .setTitle(getString(R.string.update_available_title))
             .setMessage(getString(R.string.update_available_message, versionName))
             .setPositiveButton(getString(R.string.update_download)) { _, _ ->
-                val intent = Intent(Intent.ACTION_VIEW,
-                    android.net.Uri.parse(downloadUrl))
-                startActivity(intent)
+                downloadAndInstallApk(downloadUrl)
             }
             .setNegativeButton(getString(R.string.update_later), null)
             .show()
+    }
+
+    private fun downloadAndInstallApk(downloadUrl: String) {
+        val progressDialog = AlertDialog.Builder(this)
+            .setTitle(getString(R.string.update_downloading))
+            .setMessage(getString(R.string.update_downloading_message))
+            .setCancelable(false)
+            .show()
+
+        lifecycleScope.launch {
+            val apkFile = withContext(Dispatchers.IO) {
+                try {
+                    val request = Request.Builder().url(downloadUrl).build()
+                    val response = httpClient.newCall(request).execute()
+                    if (!response.isSuccessful) return@withContext null
+                    val file = File(cacheDir, "update.apk")
+                    response.body?.byteStream()?.use { input ->
+                        file.outputStream().use { output -> input.copyTo(output) }
+                    }
+                    file
+                } catch (e: Exception) {
+                    Log.e(TAG, "APK download failed: ${e.message}")
+                    null
+                }
+            }
+            progressDialog.dismiss()
+            if (apkFile != null) {
+                val uri = FileProvider.getUriForFile(
+                    this@MainActivity,
+                    "${packageName}.fileprovider",
+                    apkFile
+                )
+                val intent = Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
+                    data = uri
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivity(intent)
+                // Clean up the cached APK once the installer has been handed the URI
+                apkFile.deleteOnExit()
+            } else {
+                Toast.makeText(this@MainActivity, getString(R.string.update_download_failed), Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     // ── Data source / refresh metadata ─────────────────────────────────
