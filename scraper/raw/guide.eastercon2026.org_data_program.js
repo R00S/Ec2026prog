@@ -4056,8 +4056,8 @@
                     "name": "Linn\u00e9a  Anglemark"
                 },
                 {
-                    "id": "0417",
-                    "name": "Nicholas Whyte"
+                    "id": "0444",
+                    "name": "Eleanor Powers"
                 },
                 {
                     "id": "0485",
