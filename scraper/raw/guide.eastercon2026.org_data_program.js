@@ -1014,8 +1014,8 @@
                 "Track:Film & TV",
                 "Division:Programme",
                 "Type:Panel",
-                "Tag:Science Fiction",
                 "Tag:Film & TV",
+                "Tag:Science Fiction",
                 "Tag:StreamReplay: Streamed",
                 "Tag:StreamReplay: Replay"
             ],
@@ -4177,6 +4177,10 @@
                     "name": "SJ Groenewegen"
                 },
                 {
+                    "id": "0272",
+                    "name": "Robin C.M. Duncan"
+                },
+                {
                     "id": "0332",
                     "name": "Mike Brooks"
                 },
@@ -4635,7 +4639,8 @@
                 "Tag:Craft of Writing",
                 "Tag:Writing",
                 "Tag:StreamReplay: Streamed",
-                "Tag:StreamReplay: Replay"
+                "Tag:StreamReplay: Replay",
+                "Tag:Signup required"
             ],
             "date": "2026-04-04",
             "time": "21:00",
@@ -4649,7 +4654,7 @@
                     "name": "Tiffani Angus (moderator)"
                 }
             ],
-            "desc": "<p>Novelist and writing teacher Tiffani Angus guides you through the ins and outs of creating plausible, interested haunted, cursed and possessed items for your sff stories.<\/p>",
+            "desc": "<p>Novelist and writing teacher Tiffani Angus guides you through the ins and outs of creating plausible, interested haunted, cursed and possessed items for your sff stories.<\/p>\r\n<p>Please note that although this item will be streamed, Tiffani will not be able to interact with remote participants so it will be watch only.<\/p>",
             "links": {
                 "streaming": "https:\/\/portal.eastercon2026.org\/deep-link\/stream?room_id=Salisbury-Wellington",
                 "replay": "https:\/\/portal.eastercon2026.org\/deep-link\/replay?item_id=1129",
