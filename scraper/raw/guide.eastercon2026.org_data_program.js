@@ -2201,7 +2201,7 @@
                 },
                 {
                     "id": "Z0001",
-                    "name": "Malke Older"
+                    "name": "Malka Older"
                 }
             ],
             "desc": "<p>How do geography, culture, and language shape the futures we imagine and the stories the market will allow us to tell?<\/p>",
