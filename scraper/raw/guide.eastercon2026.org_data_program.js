@@ -1422,7 +1422,7 @@
                     "name": "Sarah Haddock (moderator)"
                 }
             ],
-            "desc": "<p>Learn to read basic hieroglyphs, and discover commons misconceptions, and the liberties taken by TV and Movies. Sarah will talk about hieroglyphs, the basics, the complicated nature of the language, and teach how to translate a funerary inscription.<\/p>",
+            "desc": "<p>Learn to read basic hieroglyphs, and discover commons misconceptions, and the liberties taken by TV and Movies. Sarah will talk about hieroglyphs, the basics, the complicated nature of the language, and teach how to translate a funerary inscription.<\/p>\r\n<p><a href=\"https:\/\/portal.eastercon2026.org\/programme-handouts#learn-to-read-basic-hieroglyphics\">Handouts<\/a><\/p>",
             "links": {
                 "streaming": "https:\/\/portal.eastercon2026.org\/deep-link\/stream?room_id=Balmoral",
                 "replay": "https:\/\/portal.eastercon2026.org\/deep-link\/replay?item_id=1040"
@@ -3942,6 +3942,10 @@
                 {
                     "id": "0341",
                     "name": "Shana Worthen"
+                },
+                {
+                    "id": "0523",
+                    "name": "Ida Keogh"
                 }
             ],
             "desc": "<p>Food is everywhere in SFF: the panel looks at the role it plays in books, tv and film. How does it relate to worldbuilding, and to characterisation?<\/p>",
