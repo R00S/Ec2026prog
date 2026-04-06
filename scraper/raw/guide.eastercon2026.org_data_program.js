@@ -5887,7 +5887,7 @@
                     "name": "Everina Maxwell"
                 }
             ],
-            "desc": "<p>Author readings with Aliette de Bodard, Juliet McKenna<\/p>",
+            "desc": "<p>Author readings with Aliette de Bodard, Juliet McKenna, Everina Maxwell<\/p>",
             "links": {
                 "streaming": "https:\/\/portal.eastercon2026.org\/deep-link\/stream?room_id=Salisbury-Wellington",
                 "replay": "https:\/\/portal.eastercon2026.org\/deep-link\/replay?item_id=1179"
