@@ -1,0 +1,221 @@
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -1,4 +1,7 @@
+-# Ec2026prog
+-Eurocon 2026 schedule
++# Fantastika 2026 programme
++
++Android programme guide for [Fantastika 2026](https://fantastika2026.com/) (Swecon 2026).
++
++Data source: [guide.fantastika2026.com](https://guide.fantastika2026.com/)
+ 
+ [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?logo=buymeacoffee)](https://buymeacoffee.com/r00s)
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -96,7 +96,7 @@ jobs:
+       - name: Create GitHub Release
+         uses: softprops/action-gh-release@v2
+         with:
+           tag_name: ${{ steps.version.outputs.tag }}
+-          name: "Eastercon 2026 Programme Guide ${{ steps.version.outputs.version }}"
++          name: "Fantastika 2026 Programme Guide ${{ steps.version.outputs.version }}"
+           body: |
+             Automated release from commit ${{ github.sha }}
+ 
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -12,8 +12,8 @@ android {
+         applicationId = "org.eastercon2026.prog"
+         minSdk = 26
+         targetSdk = 35
+-        versionCode = 6
+-        versionName = "1.5.0"
++        versionCode = 7
++        versionName = "1.6.0"
+     }
+ 
+     signingConfigs {
+diff --git a/app/src/main/java/org/eastercon2026/prog/MainActivity.kt b/app/src/main/java/org/eastercon2026/prog/MainActivity.kt
+--- a/app/src/main/java/org/eastercon2026/prog/MainActivity.kt
++++ b/app/src/main/java/org/eastercon2026/prog/MainActivity.kt
+@@ -127,16 +127,15 @@ class MainActivity : AppCompatActivity() {
+     }
+ 
+     private fun setupTabs() {
+-        val days = listOf(DAY_ALL, "Friday", "Saturday", "Sunday", "Monday")
++        val days = listOf(DAY_ALL, "Friday", "Saturday", "Sunday")
+         days.forEach { day ->
+             val tab = tabLayout.newTab().setText(
+                 when (day) {
+                     DAY_ALL -> getString(R.string.tab_all)
+                     "Friday" -> getString(R.string.tab_fri)
+                     "Saturday" -> getString(R.string.tab_sat)
+                     "Sunday" -> getString(R.string.tab_sun)
+-                    "Monday" -> getString(R.string.tab_mon)
+                     else -> day
+                 }
+             )
+             tabLayout.addTab(tab)
+         }
+diff --git a/app/src/main/java/org/eastercon2026/prog/network/ProgrammeFetcher.kt b/app/src/main/java/org/eastercon2026/prog/network/ProgrammeFetcher.kt
+--- a/app/src/main/java/org/eastercon2026/prog/network/ProgrammeFetcher.kt
++++ b/app/src/main/java/org/eastercon2026/prog/network/ProgrammeFetcher.kt
+@@ -27,7 +27,7 @@ class ProgrammeFetcher {
+         .followRedirects(true)
+         .build()
+ 
+-    private val baseUrl = "https://guide.eastercon2026.org"
++    private val baseUrl = "https://guide.fantastika2026.com"
+ 
+     fun fetchProgramme(progressCallback: ((Int, Int) -> Unit)? = null): List<Event> {
+         Log.d(TAG, "Starting programme fetch")
+@@ -44,12 +44,12 @@ class ProgrammeFetcher {
+ 
+         Log.d(TAG, "GitHub raw fetch failed, trying live site $baseUrl")
+ 
+-        // Try PlanZ/KonOpas API – the primary format used by Eastercon 2026
++        // Try PlanZ/KonOpas API – primary format used by ConClár-style guides
+         val planzEvents = tryPlanzApi()
+         if (planzEvents.isNotEmpty()) {
+             Log.d(TAG, "Got ${planzEvents.size} events from PlanZ API")
+-            lastSource = "PlanZ live (guide.eastercon2026.org)"
++            lastSource = "PlanZ live (guide.fantastika2026.com)"
+             progressCallback?.invoke(planzEvents.size, planzEvents.size)
+             return planzEvents
+         }
+@@ -99,7 +99,7 @@ class ProgrammeFetcher {
+         }
+     }
+ 
+-    // ── PlanZ / KonOpas API (primary source for Eastercon 2026) ─────────
++    // ── PlanZ / KonOpas API ─────────────────────────────────────────────
+ 
+     private fun tryPlanzApi(): List<Event> {
+         val urls = listOf(
+@@ -540,7 +540,7 @@ class ProgrammeFetcher {
+     }
+ 
+     private fun inferDay(startTime: String, pageText: String): String {
+-        // Eastercon 2026 is 3–6 April 2026 (Fri–Mon)
++        // Fantastika 2026 is 23–25 October 2026 (Fri–Sun)
+         val dayPatterns = mapOf(
+             "friday" to "Friday", "fri" to "Friday",
+             "saturday" to "Saturday", "sat" to "Saturday",
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml
++++ b/app/src/main/res/values/strings.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <resources>
+-    <string name="app_name">Eastercon 2026</string>
++    <string name="app_name">Fantastika 2026</string>
+     <string name="tab_all">All</string>
+     <string name="tab_fri">Fri</string>
+     <string name="tab_sat">Sat</string>
+diff --git a/app/src/main/res/values-sv/strings.xml b/app/src/main/res/values-sv/strings.xml
+new file mode 100644
+--- /dev/null
++++ b/app/src/main/res/values-sv/strings.xml
+@@ -0,0 +1,43 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <string name="app_name">Fantastika 2026</string>
++    <string name="tab_all">Alla</string>
++    <string name="tab_fri">Fre</string>
++    <string name="tab_sat">Lör</string>
++    <string name="tab_sun">Sön</string>
++    <string name="tab_mon">Mån</string>
++    <string name="loading_fetching">Hämtar program…</string>
++    <string name="loading_progress">Laddar %1$d av %2$d…</string>
++    <string name="error_no_events">Kunde inte ladda programmet. Kontrollera anslutningen och uppdatera.</string>
++    <string name="no_events_for_day">Inga programpunkter den här dagen.</string>
++    <string name="unknown_location">Plats meddelas senare</string>
++    <string name="no_description">Ingen beskrivning.</string>
++    <string name="action_refresh">Uppdatera</string>
++    <string name="action_buy_coffee">Bjud appens skapare på en kaffe! ☕</string>
++    <string name="filter_going">Går</string>
++    <string name="filter_interested">Intresserad</string>
++    <string name="filter_default">Standard</string>
++    <string name="filter_hidden">Dold</string>
++    <string name="filter_passed">Passerad</string>
++    <string name="your_interest">Ditt intresse</string>
++    <string name="going">Går</string>
++    <string name="interested">Intresserad</string>
++    <string name="hidden">Dölj</string>
++    <string name="update_available_title">Uppdatering tillgänglig</string>
++    <string name="update_available_message">Version %1$s finns. Vill du ladda ner den?</string>
++    <string name="update_download">Ladda ner</string>
++    <string name="update_later">Senare</string>
++    <string name="update_downloading">Laddar ner…</string>
++    <string name="update_downloading_message">Laddar ner uppdatering, vänta…</string>
++    <string name="update_download_failed">Nedladdningen misslyckades. Försök igen senare.</string>
++    <string name="action_about">Om</string>
++    <string name="about_title">Om</string>
++    <string name="about_version">Version %1$s</string>
++    <string name="about_latest">Senaste tillgängliga: %1$s</string>
++    <string name="about_up_to_date">Uppdaterad ✓</string>
++    <string name="about_data_source">Datakälla: %1$s</string>
++    <string name="about_last_refresh">Senast uppdaterad: %1$s</string>
++    <string name="about_never_refreshed">Inte uppdaterad ännu</string>
++    <string name="about_bundled">Inbyggd (vid installation)</string>
++    <string name="about_checking">Kontrollerar…</string>
++    <string name="about_close">Stäng</string>
++</resources>
+diff --git a/scraper/scrape.py b/scraper/scrape.py
+--- a/scraper/scrape.py
++++ b/scraper/scrape.py
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env python3
+ """
+-Eastercon 2026 programme scraper.
++Fantastika 2026 programme scraper.
+ 
+ Usage:
+     python scrape.py [BASE_URL]
+@@ -31,7 +31,7 @@ except ImportError:
+     print("Missing dependencies. Run: pip install requests beautifulsoup4 lxml", file=sys.stderr)
+     sys.exit(1)
+ 
+-BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "https://guide.eastercon2026.org"
++BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "https://guide.fantastika2026.com"
+ BASE_URL = BASE_URL.rstrip("/")
+ 
+ SESSION = requests.Session()
+@@ -83,13 +83,12 @@ def _save_raw(url, resp):
+         print(f"  Could not save raw response for {url}: {e}", file=sys.stderr)
+ 
+ 
+-# Eastercon 2026 dates (Fri 3 - Mon 6 April 2026)
++# Fantastika 2026 dates (Fri 23 - Sun 25 October 2026)
+ DATE_TO_DAY = {
+-    "2026-04-03": "Friday",
+-    "2026-04-04": "Saturday",
+-    "2026-04-05": "Sunday",
+-    "2026-04-06": "Monday",
++    "2026-10-23": "Friday",
++    "2026-10-24": "Saturday",
++    "2026-10-25": "Sunday",
+ }
+ DAY_NAMES = {
+     "fri": "Friday", "friday": "Friday",
+@@ -326,7 +325,7 @@ def _parse_planz_response(text, url):
+ 
+ 
+ def try_planz_api():
+-    """Try PlanZ/Zambia KonOpas export endpoint (used by Eastercon 2026)."""
++    """Try PlanZ/Zambia KonOpas export endpoint."""
+     candidates = [
+         f"{BASE_URL}/konOpas.php",
+         f"{BASE_URL}/webpages/konOpas.php",
+@@ -1001,7 +1000,7 @@ def main():
+         print(json.dumps(pdf_events, ensure_ascii=False, indent=2))
+         return 0
+ 
+-    # Try PlanZ/Zambia KonOpas endpoint (used by Eastercon 2026)
++    # Try PlanZ/Zambia KonOpas endpoint
+     planz_data = try_planz_api()
+     if planz_data:
+         events = [normalise_planz_item(item) for item in planz_data]
