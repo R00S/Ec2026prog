@@ -18,6 +18,7 @@ Supports Grenadine-powered event sites by trying:
 
 import io
 import json
+import html
 import os
 import re
 import sys
@@ -161,6 +162,24 @@ def try_grenadine_api():
     return None
 
 
+
+def clean_html_text(s):
+    """Strip tags and decode HTML entities (&ouml; &nbsp; &#nnn;)."""
+    if s is None:
+        return ""
+    s = str(s)
+    s = html.unescape(s)
+    if "<" in s:
+        try:
+            s = BeautifulSoup(s, "lxml").get_text(separator=" ", strip=True)
+        except Exception:
+            s = re.sub(r"<[^>]+>", " ", s)
+        s = html.unescape(s)
+    s = s.replace("\u00a0", " ").replace("\xa0", " ")
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
 def normalise_planz_item(raw):
     """Normalise a PlanZ/Zambia KonOpas item to our schema.
 
@@ -190,14 +209,9 @@ def normalise_planz_item(raw):
     loc = raw.get("loc", [])
     location = loc[0] if isinstance(loc, list) and loc else str(raw.get("loc", ""))
 
-    desc_raw = raw.get("desc", "") or raw.get("description", "")
-    if "<" in str(desc_raw):
-        try:
-            description = BeautifulSoup(str(desc_raw), "lxml").get_text(separator=" ", strip=True)
-        except Exception:
-            description = re.sub(r"<[^>]+>", " ", str(desc_raw)).strip()
-    else:
-        description = str(desc_raw)
+    description = clean_html_text(raw.get("desc", "") or raw.get("description", ""))
+    title = clean_html_text(title)
+    location = clean_html_text(location)
 
     day = infer_day(start_time, date)
 
@@ -226,14 +240,9 @@ def normalise_grenadine_item(raw):
     location = loc[0] if isinstance(loc, list) and loc else raw.get("location", "")
 
     # Description may contain HTML
-    desc_raw = raw.get("desc", "") or raw.get("description", "")
-    if "<" in desc_raw:
-        try:
-            description = BeautifulSoup(desc_raw, "lxml").get_text(separator=" ", strip=True)
-        except Exception:
-            description = re.sub(r"<[^>]+>", " ", desc_raw).strip()
-    else:
-        description = desc_raw
+    description = clean_html_text(raw.get("desc", "") or raw.get("description", ""))
+    title = clean_html_text(title)
+    location = clean_html_text(location)
 
     day = infer_day(start_time, raw.get("date", ""))
 
@@ -315,11 +324,28 @@ def _parse_planz_response(text, url):
             print(f"  Got {len(data)} items (JSON array) from {url}", file=sys.stderr)
             return data
         if isinstance(data, dict):
-            for key in ("program", "programme", "events", "items", "sessions"):
+            for key in ("program", "programme", "events", "items", "sessions", "schedule"):
                 val = data.get(key)
-                if isinstance(val, list) and len(val) > 0:
+                if isinstance(val, list) and len(val) > 0 and isinstance(val[0], dict) and "title" in val[0]:
                     print(f"  Got {len(val)} items (JSON key={key}) from {url}", file=sys.stderr)
                     return val
+            # schemaVersion 2 m.m.: sök rekursivt
+            def _find(o, depth=0):
+                if depth > 6:
+                    return None
+                if isinstance(o, list) and o and isinstance(o[0], dict):
+                    if "title" in o[0] and ("date" in o[0] or "time" in o[0] or "datetime" in o[0]):
+                        return o
+                if isinstance(o, dict):
+                    for v in o.values():
+                        found = _find(v, depth + 1)
+                        if found:
+                            return found
+                return None
+            found = _find(data)
+            if found:
+                print(f"  Got {len(found)} items (nested) from {url}", file=sys.stderr)
+                return found
     except (json.JSONDecodeError, ValueError):
         pass
     return None

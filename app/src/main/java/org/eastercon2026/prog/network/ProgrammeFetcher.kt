@@ -92,7 +92,9 @@ class ProgrammeFetcher {
             val body = response.body?.string() ?: return emptyList()
             val type = object : TypeToken<List<Event>>() {}.type
             val events: List<Event> = Gson().fromJson(body, type) ?: emptyList()
-            events
+            events.map { e ->
+                e.copy(description = Jsoup.parse(e.description ?: "").text())
+            }
         } catch (e: Exception) {
             Log.w(TAG, "GitHub raw fetch failed: ${e.message}")
             emptyList()
@@ -206,11 +208,7 @@ class ProgrammeFetcher {
 
                 val descRaw = obj.get("desc")?.asString
                     ?: obj.get("description")?.asString ?: ""
-                val description = if (descRaw.contains("<")) {
-                    Jsoup.parse(descRaw).text()
-                } else {
-                    descRaw
-                }
+                val description = Jsoup.parse(descRaw).text()
 
                 val day = inferDay(startTime, "" /* no extra page text; day is inferred from startTime date */)
                 Event(itemId, title, startTime, endTime, location, description, day)
@@ -266,11 +264,7 @@ class ProgrammeFetcher {
                 // Description may contain HTML
                 val descRaw = obj.get("desc")?.asString
                     ?: obj.get("description")?.asString ?: ""
-                val description = if (descRaw.contains("<")) {
-                    Jsoup.parse(descRaw).text()
-                } else {
-                    descRaw
-                }
+                val description = Jsoup.parse(descRaw).text()
 
                 val day = inferDay(startTime, "" /* no extra page text; day is inferred from startTime date */)
 
