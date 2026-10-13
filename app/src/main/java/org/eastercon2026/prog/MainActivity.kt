@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupTabs() {
-        val days = listOf(DAY_ALL, "Friday", "Saturday", "Sunday", "Monday")
+        val days = listOf(DAY_ALL, "Friday", "Saturday", "Sunday")
         days.forEach { day ->
             val tab = tabLayout.newTab().setText(
                 when (day) {
@@ -135,7 +135,6 @@ class MainActivity : AppCompatActivity() {
                     "Friday" -> getString(R.string.tab_fri)
                     "Saturday" -> getString(R.string.tab_sat)
                     "Sunday" -> getString(R.string.tab_sun)
-                    "Monday" -> getString(R.string.tab_mon)
                     else -> day
                 }
             )
@@ -221,7 +220,7 @@ class MainActivity : AppCompatActivity() {
                 try {
                     val json = assets.open("programme.json").bufferedReader().use { it.readText() }
                     val type = object : TypeToken<List<Event>>() {}.type
-                    Gson().fromJson<List<Event>>(json, type)
+                    Gson().fromJson<List<Event>>(json, type) ?: emptyList()
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to load bundled programme: ${e.message}")
                     emptyList()

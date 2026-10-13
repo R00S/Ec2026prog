@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Fantastika 2026</string>
+    <string name="tab_all">Alla</string>
+    <string name="tab_fri">Fre</string>
+    <string name="tab_sat">Lör</string>
+    <string name="tab_sun">Sön</string>
+    <string name="tab_mon">Mån</string>
+    <string name="loading_fetching">Hämtar program…</string>
+    <string name="loading_progress">Laddar %1$d av %2$d…</string>
+    <string name="error_no_events">Kunde inte ladda programmet. Kontrollera anslutningen och uppdatera.</string>
+    <string name="no_events_for_day">Inga programpunkter den här dagen.</string>
+    <string name="unknown_location">Plats meddelas senare</string>
+    <string name="no_description">Ingen beskrivning.</string>
+    <string name="action_refresh">Uppdatera</string>
+    <string name="action_buy_coffee">Bjud appens skapare på en kaffe! ☕</string>
+    <string name="filter_going">Går</string>
+    <string name="filter_interested">Intresserad</string>
+    <string name="filter_default">Standard</string>
+    <string name="filter_hidden">Dold</string>
+    <string name="filter_passed">Passerad</string>
+    <string name="your_interest">Ditt intresse</string>
+    <string name="going">Går</string>
+    <string name="interested">Intresserad</string>
+    <string name="hidden">Dölj</string>
+    <string name="update_available_title">Uppdatering tillgänglig</string>
+    <string name="update_available_message">Version %1$s finns. Vill du ladda ner den?</string>
+    <string name="update_download">Ladda ner</string>
+    <string name="update_later">Senare</string>
+    <string name="update_downloading">Laddar ner…</string>
+    <string name="update_downloading_message">Laddar ner uppdatering, vänta…</string>
+    <string name="update_download_failed">Nedladdningen misslyckades. Försök igen senare.</string>
+    <string name="action_about">Om</string>
+    <string name="about_title">Om</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_latest">Senaste tillgängliga: %1$s</string>
+    <string name="about_up_to_date">Uppdaterad ✓</string>
+    <string name="about_data_source">Datakälla: %1$s</string>
+    <string name="about_last_refresh">Senast uppdaterad: %1$s</string>
+    <string name="about_never_refreshed">Inte uppdaterad ännu</string>
+    <string name="about_bundled">Inbyggd (vid installation)</string>
+    <string name="about_checking">Kontrollerar…</string>
+    <string name="about_close">Stäng</string>
+</resources>

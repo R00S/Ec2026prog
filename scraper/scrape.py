@@ -31,7 +31,7 @@ except ImportError:
     print("Missing dependencies. Run: pip install requests beautifulsoup4 lxml", file=sys.stderr)
     sys.exit(1)
 
-BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "https://guide.eastercon2026.org"
+BASE_URL = sys.argv[1] if len(sys.argv) > 1 else "https://guide.fantastika2026.com"
 BASE_URL = BASE_URL.rstrip("/")
 
 SESSION = requests.Session()
@@ -333,6 +333,7 @@ def try_planz_api():
         f"{BASE_URL}/cap/program.js",
         f"{BASE_URL}/data/program.js",
         f"{BASE_URL}/program.js",
+        f"{BASE_URL}/guide/program.js",
     ]
     for url in candidates:
         print(f"Trying PlanZ endpoint: {url}", file=sys.stderr)

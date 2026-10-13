@@ -96,7 +96,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
-          name: "Eastercon 2026 Programme Guide ${{ steps.version.outputs.version }}"
+          name: "Fantastika 2026 Programme Guide ${{ steps.version.outputs.version }}"
           body: |
             Automated release from commit ${{ github.sha }}
 

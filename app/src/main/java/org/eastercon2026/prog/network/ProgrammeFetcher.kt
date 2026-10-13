@@ -27,7 +27,7 @@ class ProgrammeFetcher {
         .followRedirects(true)
         .build()
 
-    private val baseUrl = "https://guide.eastercon2026.org"
+    private val baseUrl = "https://guide.fantastika2026.com"
 
     fun fetchProgramme(progressCallback: ((Int, Int) -> Unit)? = null): List<Event> {
         Log.d(TAG, "Starting programme fetch")
@@ -48,7 +48,7 @@ class ProgrammeFetcher {
         val planzEvents = tryPlanzApi()
         if (planzEvents.isNotEmpty()) {
             Log.d(TAG, "Got ${planzEvents.size} events from PlanZ API")
-            lastSource = "PlanZ live (guide.eastercon2026.org)"
+            lastSource = "PlanZ live (guide.fantastika2026.com)"
             progressCallback?.invoke(planzEvents.size, planzEvents.size)
             return planzEvents
         }
@@ -107,7 +107,8 @@ class ProgrammeFetcher {
             "$baseUrl/konOpas.php",
             "$baseUrl/webpages/konOpas.php",
             "$baseUrl/cap/program.js",
-            "$baseUrl/program.js"
+            "$baseUrl/program.js",
+            "$baseUrl/guide/program.js"
         )
         for (url in urls) {
             Log.d(TAG, "Trying PlanZ endpoint: $url")
