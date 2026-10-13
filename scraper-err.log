@@ -1,0 +1,63 @@
+icalendar not installed, skipping ICS
+pdfplumber not installed, skipping PDF
+Trying PlanZ endpoint: https://guide.fantastika2026.com/konOpas.php
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_konOpas.php
+Trying PlanZ endpoint: https://guide.fantastika2026.com/webpages/konOpas.php
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_webpages_konOpas.php
+Trying PlanZ endpoint: https://guide.fantastika2026.com/cap/program.js
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_cap_program.js
+Trying PlanZ endpoint: https://guide.fantastika2026.com/data/program.js
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_data_program.js
+Trying PlanZ endpoint: https://guide.fantastika2026.com/program.js
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_program.js
+Trying Grenadine API: https://guide.fantastika2026.com/program.json
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_program.json
+  https://guide.fantastika2026.com/program.json -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying Grenadine API: https://guide.fantastika2026.com/program.json?scale=2.0
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_program.json
+  https://guide.fantastika2026.com/program.json?scale=2.0 -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying JSON endpoint: https://guide.fantastika2026.com/api/events
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_api_events
+  https://guide.fantastika2026.com/api/events -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying JSON endpoint: https://guide.fantastika2026.com/api/programme
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_api_programme
+  https://guide.fantastika2026.com/api/programme -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying JSON endpoint: https://guide.fantastika2026.com/programme.json
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_programme.json
+  https://guide.fantastika2026.com/programme.json -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying JSON endpoint: https://guide.fantastika2026.com/events.json
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_events.json
+  https://guide.fantastika2026.com/events.json -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying JSON endpoint: https://guide.fantastika2026.com/data/events.json
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_data_events.json
+  https://guide.fantastika2026.com/data/events.json -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying JSON endpoint: https://guide.fantastika2026.com/api/items
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_api_items
+  https://guide.fantastika2026.com/api/items -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying JSON endpoint: https://guide.fantastika2026.com/api/schedule
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_api_schedule
+  https://guide.fantastika2026.com/api/schedule -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+Trying JSON endpoint: https://guide.fantastika2026.com/schedule.json
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_schedule.json
+  https://guide.fantastika2026.com/schedule.json -> 200 [text/html] '<!DOCTYPE html> <html lang="en">   <head>     <meta charset="utf-8" />     <link rel="icon" href="https://fantastika2026'
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com
+Page title: ConClÃ¡r Program Guide
+JS bundle candidates: 3
+  https://guide.fantastika2026.com/assets/index-d7MErW0l.js
+  https://guide.fantastika2026.com/assets/rolldown-runtime-DOG2APjf.js
+  https://guide.fantastika2026.com/assets/vendor-j-6kWS7_.js
+Searching JS bundle: https://guide.fantastika2026.com/assets/index-d7MErW0l.js
+  Saved raw response (78399 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_assets_index-d7MErW0l.js
+  No data URL pattern found in bundle
+Searching JS bundle: https://guide.fantastika2026.com/assets/rolldown-runtime-DOG2APjf.js
+  Saved raw response (872 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_assets_rolldown-runtime-DOG2APjf.js
+  No data URL pattern found in bundle
+Searching JS bundle: https://guide.fantastika2026.com/assets/vendor-j-6kWS7_.js
+  Saved raw response (512000 bytes (truncated)): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com_assets_vendor-j-6kWS7_.js
+  No data URL pattern found in bundle
+Fetching main page: https://guide.fantastika2026.com
+  Saved raw response (1929 bytes): /home/roos/Ec2026prog/scraper/raw/guide.fantastika2026.com
+Found 0 item links
+No item links found - trying broader extraction
+Broader extraction found 0 links
+Failed to fetch any programme items
