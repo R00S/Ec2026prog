@@ -26,7 +26,7 @@
         } catch (e) {}
       })();
     </script>
-    <script type="module" crossorigin src="/assets/index-d7MErW0l.js"></script>
+    <script type="module" crossorigin src="/assets/index-YgXmWxd9.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-DOG2APjf.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-j-6kWS7_.js">
     <link rel="stylesheet" crossorigin href="/assets/style-tBLZs8O8.css">
