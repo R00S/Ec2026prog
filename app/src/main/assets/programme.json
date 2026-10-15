@@ -73,7 +73,7 @@
   },
   {
     "itemId": "488",
-    "title": "How to become a Worldcon volunteer, and why?",
+    "title": "How and why to be a Worldcon volunteer",
     "startTime": "2026-10-25T15:00:00",
     "endTime": "2026-10-25T15:45:00",
     "location": "Luigis lokal",
@@ -256,7 +256,7 @@
     "title": "Nördmingel på lördagkvällen/Nerd mingle",
     "startTime": "2026-10-24T19:00:00",
     "endTime": "2026-10-24T21:00:00",
-    "location": "Outside of venue",
+    "location": "Foyer",
     "description": "Ställ upp med ett bord och prata om din förening, bokcirkel eller återkommande loppis! Nördar utlovas komma och kolla! Vi minglar runt och pratar om smått och gott runt borden och bekantar oss med spännande utbud och underfundiga föreningar. Set up a table and talk about your club, book circle, or recurring flea market! Nerds are promised to come and check it out! We'll mingle around and chat about this and that around the tables and get familiar with exciting offerings and quirky associations.",
     "day": "Saturday"
   },
@@ -301,7 +301,7 @@
     "title": "Översättarkaffe: Anna Gustafsson Chen",
     "startTime": "2026-10-25T13:00:00",
     "endTime": "2026-10-25T13:45:00",
-    "location": "Outside of venue",
+    "location": "Upper foyer",
     "description": "Kom och prata med vår hedersgäst Anna Gustafsson Chen.",
     "day": "Sunday"
   },
@@ -310,7 +310,7 @@
     "title": "Fika with Maura McHugh",
     "startTime": "2026-10-25T11:00:00",
     "endTime": "2026-10-25T11:45:00",
-    "location": "Outside of venue",
+    "location": "Upper foyer",
     "description": "Get to know a Guest of Honour over fika! Join a small group of convention members in conversation, with whatever snacks and drinks you'd like to buy from the lobby café.",
     "day": "Sunday"
   },
@@ -319,7 +319,7 @@
     "title": "Fika with Gareth L. Powell",
     "startTime": "2026-10-24T16:00:00",
     "endTime": "2026-10-24T16:45:00",
-    "location": "Outside of venue",
+    "location": "Upper foyer",
     "description": "Get to know a Guest of Honour over fika! Join a small group of convention members in conversation, with whatever snacks and drinks you'd like to buy from the lobby café.",
     "day": "Saturday"
   },
