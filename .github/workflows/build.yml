@@ -82,7 +82,11 @@ jobs:
       - name: Collect APK
         run: |
           mkdir -p release-artifacts
-          find app/build/outputs/apk/release -name "*.apk" | head -1 | xargs -I{} cp {} release-artifacts/Ec2026prog-${{ steps.version.outputs.version }}.apk
+          APK=$(find app/build/outputs/apk/release -name "*.apk" | head -1)
+          cp "$APK" "release-artifacts/Ec2026prog-${{ steps.version.outputs.version }}.apk"
+          # Stable asset name used by the in-app updater
+          # (github.com/R00S/Ec2026prog/releases/latest/download/Ec2026prog-latest.apk).
+          cp "$APK" "release-artifacts/Ec2026prog-latest.apk"
 
       - name: Delete existing release for this version
         env:
@@ -106,7 +110,9 @@ jobs:
             3. Open the downloaded APK and tap **Install**.
 
             Requires Android 8.0 (API 26) or later.
-          files: release-artifacts/Ec2026prog-${{ steps.version.outputs.version }}.apk
+          files: |
+            release-artifacts/Ec2026prog-${{ steps.version.outputs.version }}.apk
+            release-artifacts/Ec2026prog-latest.apk
           draft: false
           prerelease: false
         env:

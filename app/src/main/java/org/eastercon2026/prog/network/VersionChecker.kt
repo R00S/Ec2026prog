@@ -20,8 +20,15 @@ class VersionChecker {
         .readTimeout(15, TimeUnit.SECONDS)
         .build()
 
-    private val releasesUrl =
-        "https://api.github.com/repos/R00S/Ec2026prog/releases/latest"
+    /** Does not follow redirects so the latest tag can be read from the Location header. */
+    private val noRedirectClient = client.newBuilder()
+        .followRedirects(false)
+        .followSslRedirects(false)
+        .build()
+
+    private val repoUrl = "https://github.com/R00S/Ec2026prog"
+    private val latestReleaseUrl = "$repoUrl/releases/latest"
+    private val releasesApiUrl = "https://api.github.com/repos/R00S/Ec2026prog/releases/latest"
 
     fun checkForUpdate(currentVersion: String): VersionInfo? {
         val info = getLatestRelease() ?: return null
@@ -29,10 +36,48 @@ class VersionChecker {
         return if (isNewer(latestVersion, currentVersion)) info else null
     }
 
-    fun getLatestRelease(): VersionInfo? {
+    /**
+     * Resolves the newest release without the GitHub REST API.
+     *
+     * https://github.com/<owner>/<repo>/releases/latest redirects to
+     * /releases/tag/<tag>; reading that redirect is not subject to the
+     * unauthenticated API limit of 60 requests per hour per IP. The API is
+     * kept only as a fallback.
+     */
+    fun getLatestRelease(): VersionInfo? =
+        getLatestReleaseFromRedirect() ?: getLatestReleaseFromApi()
+
+    private fun getLatestReleaseFromRedirect(): VersionInfo? {
         return try {
             val request = Request.Builder()
-                .url(releasesUrl)
+                .url(latestReleaseUrl)
+                .header("Accept", "text/html")
+                .build()
+            noRedirectClient.newCall(request).execute().use { response ->
+                val location = response.header("Location") ?: return null
+                val tagName = location.substringAfter("/releases/tag/", "")
+                    .substringBefore("?")
+                    .trim('/')
+                if (tagName.isEmpty()) return null
+                val version = tagName.trimStart('v')
+                VersionInfo(
+                    tagName = tagName,
+                    name = "Fantastika 2026 Programme Guide $version",
+                    htmlUrl = "$repoUrl/releases/tag/$tagName",
+                    // Stable asset name published alongside every versioned APK.
+                    downloadUrl = "$repoUrl/releases/latest/download/Ec2026prog-latest.apk"
+                )
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Release redirect lookup failed: ${e.message}")
+            null
+        }
+    }
+
+    private fun getLatestReleaseFromApi(): VersionInfo? {
+        return try {
+            val request = Request.Builder()
+                .url(releasesApiUrl)
                 .header("Accept", "application/vnd.github.v3+json")
                 .build()
             val response = client.newCall(request).execute()

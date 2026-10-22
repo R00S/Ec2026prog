@@ -1,11 +1,13 @@
 package org.eastercon2026.prog
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -58,6 +60,9 @@ class MainActivity : AppCompatActivity() {
 
     private val httpClient = OkHttpClient()
 
+    /** APK downloaded but waiting for the user to allow app installations. */
+    private var pendingInstallApk: File? = null
+
     private var allEvents: List<Event> = emptyList()
     private var selectedDay: String = DAY_ALL
     private val visibleStates: MutableSet<EventState> = mutableSetOf(
@@ -101,6 +106,13 @@ class MainActivity : AppCompatActivity() {
         if (allEvents.isNotEmpty()) {
             displayEvents(allEvents)
         }
+        // Resume an install that was waiting for the "install unknown apps" permission.
+        pendingInstallApk?.let { apk ->
+            if (apk.exists() && packageManager.canRequestPackageInstalls()) {
+                pendingInstallApk = null
+                launchInstaller(apk)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -112,6 +124,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_refresh -> {
                 refreshProgramme()
+                true
+            }
+            R.id.action_check_updates -> {
+                checkVersion(manual = true)
                 true
             }
             R.id.action_about -> {
@@ -355,32 +371,75 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    @Suppress("DEPRECATION")
-    private fun checkVersion() {
+    private fun checkVersion(manual: Boolean = false) {
+        val prefs = getSharedPreferences(PREFS_UPDATE, Context.MODE_PRIVATE)
+        val now = System.currentTimeMillis()
+        if (!manual && now - prefs.getLong(KEY_LAST_UPDATE_CHECK, 0L) < UPDATE_CHECK_INTERVAL_MS) {
+            return
+        }
+        prefs.edit().putLong(KEY_LAST_UPDATE_CHECK, now).apply()
+
+        val currentVersion = currentVersionName()
         lifecycleScope.launch {
+            val update = withContext(Dispatchers.IO) {
+                VersionChecker().checkForUpdate(currentVersion)
+            }
+            if (update == null) {
+                if (manual) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.update_up_to_date, currentVersion),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return@launch
+            }
+
+            val latestVersion = update.tagName.trimStart('v')
+            if (!manual) {
+                // Respect "Later" and "Skip this version" for the same release.
+                if (prefs.getString(KEY_SKIPPED_VERSION, null) == latestVersion) return@launch
+                if (prefs.getString(KEY_SNOOZED_VERSION, null) == latestVersion &&
+                    now < prefs.getLong(KEY_SNOOZE_UNTIL, 0L)
+                ) {
+                    return@launch
+                }
+            }
+            showUpdateDialog(latestVersion, update.downloadUrl)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun currentVersionName(): String {
+        return try {
             val info = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 packageManager.getPackageInfo(packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0))
             } else {
                 packageManager.getPackageInfo(packageName, 0)
             }
-            val currentVersion = info.versionName ?: "1.0.0"
-            val update = withContext(Dispatchers.IO) {
-                VersionChecker().checkForUpdate(currentVersion)
-            }
-            if (update != null) {
-                showUpdateDialog(update.name, update.downloadUrl)
-            }
+            info.versionName ?: "0"
+        } catch (e: Exception) {
+            "0"
         }
     }
 
-    private fun showUpdateDialog(versionName: String, downloadUrl: String) {
+    private fun showUpdateDialog(version: String, downloadUrl: String) {
+        val prefs = getSharedPreferences(PREFS_UPDATE, Context.MODE_PRIVATE)
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.update_available_title))
-            .setMessage(getString(R.string.update_available_message, versionName))
+            .setMessage(getString(R.string.update_available_message, version))
             .setPositiveButton(getString(R.string.update_download)) { _, _ ->
                 downloadAndInstallApk(downloadUrl)
             }
-            .setNegativeButton(getString(R.string.update_later), null)
+            .setNeutralButton(getString(R.string.update_skip)) { _, _ ->
+                prefs.edit().putString(KEY_SKIPPED_VERSION, version).apply()
+            }
+            .setNegativeButton(getString(R.string.update_later)) { _, _ ->
+                prefs.edit()
+                    .putString(KEY_SNOOZED_VERSION, version)
+                    .putLong(KEY_SNOOZE_UNTIL, System.currentTimeMillis() + UPDATE_SNOOZE_MS)
+                    .apply()
+            }
             .show()
     }
 
@@ -397,11 +456,11 @@ class MainActivity : AppCompatActivity() {
                     val request = Request.Builder().url(downloadUrl).build()
                     val response = httpClient.newCall(request).execute()
                     if (!response.isSuccessful) return@withContext null
-                    val file = File(cacheDir, "update.apk")
+                    val file = File(cacheDir, UPDATE_APK_NAME)
                     response.body?.byteStream()?.use { input ->
                         file.outputStream().use { output -> input.copyTo(output) }
                     }
-                    file
+                    if (file.length() > 0L) file else null
                 } catch (e: Exception) {
                     Log.e(TAG, "APK download failed: ${e.message}")
                     null
@@ -409,20 +468,84 @@ class MainActivity : AppCompatActivity() {
             }
             progressDialog.dismiss()
             if (apkFile != null) {
-                val uri = FileProvider.getUriForFile(
-                    this@MainActivity,
-                    "${packageName}.fileprovider",
-                    apkFile
-                )
-                val intent = Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
-                    data = uri
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                }
-                startActivity(intent)
-                // Clean up the cached APK once the installer has been handed the URI
-                apkFile.deleteOnExit()
+                installApk(apkFile)
             } else {
                 Toast.makeText(this@MainActivity, getString(R.string.update_download_failed), Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun installApk(apkFile: File) {
+        if (!apkFile.exists()) {
+            Toast.makeText(this, getString(R.string.update_download_failed), Toast.LENGTH_LONG).show()
+            return
+        }
+        if (!packageManager.canRequestPackageInstalls()) {
+            pendingInstallApk = apkFile
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.update_install_permission_title))
+                .setMessage(getString(R.string.update_install_permission_message))
+                .setPositiveButton(getString(R.string.update_open_settings)) { _, _ ->
+                    openInstallSettings()
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                    pendingInstallApk = null
+                }
+                .show()
+            return
+        }
+        launchInstaller(apkFile)
+    }
+
+    private fun openInstallSettings() {
+        try {
+            startActivity(
+                Intent(
+                    Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                    Uri.parse("package:$packageName")
+                )
+            )
+        } catch (e: ActivityNotFoundException) {
+            Log.w(TAG, "No unknown-sources settings screen: ${e.message}")
+            try {
+                startActivity(
+                    Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse("package:$packageName")
+                    )
+                )
+            } catch (e2: ActivityNotFoundException) {
+                Log.e(TAG, "No app settings screen: ${e2.message}")
+                Toast.makeText(this, getString(R.string.update_no_installer), Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun launchInstaller(apkFile: File) {
+        val uri = FileProvider.getUriForFile(
+            this,
+            "${packageName}.fileprovider",
+            apkFile
+        )
+        try {
+            startActivity(
+                Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, "application/vnd.android.package-archive")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            )
+        } catch (e: ActivityNotFoundException) {
+            Log.w(TAG, "No installer for ACTION_VIEW: ${e.message}")
+            try {
+                startActivity(
+                    Intent(Intent.ACTION_INSTALL_PACKAGE).apply {
+                        data = uri
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                )
+            } catch (e2: ActivityNotFoundException) {
+                Log.e(TAG, "No package installer available: ${e2.message}")
+                Toast.makeText(this, getString(R.string.update_no_installer), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -449,15 +572,8 @@ class MainActivity : AppCompatActivity() {
 
     // ── About dialog ────────────────────────────────────────────────────
 
-    @Suppress("DEPRECATION")
     private fun showAboutDialog() {
-        val currentVersion = try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                packageManager.getPackageInfo(packageName, android.content.pm.PackageManager.PackageInfoFlags.of(0)).versionName
-            } else {
-                packageManager.getPackageInfo(packageName, 0).versionName
-            }
-        } catch (e: Exception) { "?" } ?: "?"
+        val currentVersion = currentVersionName()
 
         val (source, refresh) = getDataMeta()
         val message = buildString {
@@ -527,5 +643,14 @@ class MainActivity : AppCompatActivity() {
         private const val PREFS_NAME = "data_meta"
         private const val KEY_DATA_SOURCE = "data_source"
         private const val KEY_LAST_REFRESH = "last_refresh"
+
+        private const val PREFS_UPDATE = "update_prefs"
+        private const val KEY_LAST_UPDATE_CHECK = "last_update_check"
+        private const val KEY_SNOOZED_VERSION = "snoozed_version"
+        private const val KEY_SNOOZE_UNTIL = "snooze_until"
+        private const val KEY_SKIPPED_VERSION = "skipped_version"
+        private const val UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000L
+        private const val UPDATE_SNOOZE_MS = 24 * 60 * 60 * 1000L
+        private const val UPDATE_APK_NAME = "update.apk"
     }
 }
