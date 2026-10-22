@@ -3,6 +3,7 @@ package org.eastercon2026.prog.network
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import okhttp3.OkHttpClient
@@ -93,7 +94,10 @@ class ProgrammeFetcher {
             val type = object : TypeToken<List<Event>>() {}.type
             val events: List<Event> = Gson().fromJson(body, type) ?: emptyList()
             events.map { e ->
-                e.copy(description = Jsoup.parse(e.description ?: "").text())
+                e.copy(
+                    description = Jsoup.parse(e.description ?: "").text(),
+                    participants = e.participants.orEmpty()
+                )
             }
         } catch (e: Exception) {
             Log.w(TAG, "GitHub raw fetch failed: ${e.message}")
@@ -171,6 +175,39 @@ class ProgrammeFetcher {
         return null
     }
 
+    /**
+     * Collect participant names from a PlanZ/Grenadine item.
+     *
+     * PlanZ stores them as ``"people": [{"id": …, "name": …}]``; other
+     * formats use a list of names or a delimited string.
+     */
+    private fun extractParticipants(obj: JsonObject): List<String> {
+        val names = mutableListOf<String>()
+        for (key in listOf("people", "participants", "speakers")) {
+            val element = obj.get(key) ?: continue
+            when {
+                element.isJsonArray -> element.asJsonArray.forEach { person ->
+                    val name = when {
+                        person.isJsonObject -> person.asJsonObject.get("name")
+                            ?.takeIf { it.isJsonPrimitive }?.asString
+                        person.isJsonPrimitive -> person.asString
+                        else -> null
+                    }
+                    if (!name.isNullOrBlank()) {
+                        val cleaned = Jsoup.parse(name).text().trim()
+                        if (cleaned.isNotEmpty()) names.add(cleaned)
+                    }
+                }
+                element.isJsonPrimitive -> element.asString
+                    .split(",", ";")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                    .forEach { names.add(it) }
+            }
+        }
+        return names.distinct()
+    }
+
     private fun parsePlanzItems(array: JsonArray): List<Event> {
         return array.mapNotNull { element ->
             try {
@@ -211,7 +248,7 @@ class ProgrammeFetcher {
                 val description = Jsoup.parse(descRaw).text()
 
                 val day = inferDay(startTime, "" /* no extra page text; day is inferred from startTime date */)
-                Event(itemId, title, startTime, endTime, location, description, day)
+                Event(itemId, title, startTime, endTime, location, description, day, extractParticipants(obj))
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to parse PlanZ item: ${e.message}")
                 null
@@ -268,7 +305,7 @@ class ProgrammeFetcher {
 
                 val day = inferDay(startTime, "" /* no extra page text; day is inferred from startTime date */)
 
-                Event(itemId, title, startTime, endTime, location, description, day)
+                Event(itemId, title, startTime, endTime, location, description, day, extractParticipants(obj))
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to parse Grenadine item: ${e.message}")
                 null
@@ -335,7 +372,7 @@ class ProgrammeFetcher {
                 val dayRaw = get("day", "weekday", "date")
                 val day = DAY_NAMES[dayRaw.lowercase().take(3)] ?: inferDay(startTime, dayRaw)
 
-                Event(itemId, title, startTime, endTime, location, description, day)
+                Event(itemId, title, startTime, endTime, location, description, day, extractParticipants(obj))
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to parse JSON item: ${e.message}")
                 null

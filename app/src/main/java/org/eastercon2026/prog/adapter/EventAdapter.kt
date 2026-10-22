@@ -35,6 +35,7 @@ class EventAdapter(
         private val titleView: TextView = itemView.findViewById(R.id.eventTitle)
         private val timeView: TextView = itemView.findViewById(R.id.eventTime)
         private val locationView: TextView = itemView.findViewById(R.id.eventLocation)
+        private val participantsView: TextView = itemView.findViewById(R.id.eventParticipants)
         private val stateIndicator: View = itemView.findViewById(R.id.stateIndicator)
         private val cardContainer: View = itemView.findViewById(R.id.cardContainer)
 
@@ -42,6 +43,10 @@ class EventAdapter(
             val ctx = itemView.context
             titleView.text = item.event.title
             locationView.text = item.event.location.ifEmpty { ctx.getString(R.string.unknown_location) }
+
+            val participants = item.event.participants.orEmpty()
+            participantsView.text = participants.joinToString(", ")
+            participantsView.visibility = if (participants.isEmpty()) View.GONE else View.VISIBLE
 
             val timeText = buildTimeString(item.event.startTime, item.event.endTime)
             timeView.text = timeText
@@ -85,6 +90,7 @@ class EventAdapter(
             titleView.alpha = alpha
             timeView.alpha = alpha
             locationView.alpha = alpha
+            participantsView.alpha = alpha
 
             if (strikethrough) {
                 titleView.paintFlags = titleView.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG

@@ -347,6 +347,10 @@ class MainActivity : AppCompatActivity() {
             putExtra(DetailActivity.EXTRA_LOCATION, event.location)
             putExtra(DetailActivity.EXTRA_DESCRIPTION, event.description)
             putExtra(DetailActivity.EXTRA_DAY, event.day)
+            putStringArrayListExtra(
+                DetailActivity.EXTRA_PARTICIPANTS,
+                ArrayList(event.participants.orEmpty())
+            )
         }
         startActivity(intent)
     }
@@ -502,7 +506,8 @@ class MainActivity : AppCompatActivity() {
         endTime = endTime,
         location = location,
         description = description,
-        day = day
+        day = day,
+        participants = participants.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
     )
 
     private fun Event.toEntity() = EventEntity(
@@ -512,7 +517,8 @@ class MainActivity : AppCompatActivity() {
         endTime = endTime,
         location = location,
         description = description,
-        day = day
+        day = day,
+        participants = participants.orEmpty().joinToString("\n")
     )
 
     companion object {

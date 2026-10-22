@@ -12,6 +12,7 @@
     <string name="no_events_for_day">Inga programpunkter den här dagen.</string>
     <string name="unknown_location">Plats meddelas senare</string>
     <string name="no_description">Ingen beskrivning.</string>
+    <string name="participants">Medverkande</string>
     <string name="action_refresh">Uppdatera</string>
     <string name="action_buy_coffee">Bjud appens skapare på en kaffe! ☕</string>
     <string name="filter_going">Går</string>

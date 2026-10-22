@@ -17,5 +17,6 @@ data class EventEntity(
     val endTime: String,
     val location: String,
     val description: String,
-    val day: String
+    val day: String,
+    val participants: String = ""
 )

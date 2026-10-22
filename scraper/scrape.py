@@ -180,6 +180,32 @@ def clean_html_text(s):
     return s
 
 
+def extract_participants(raw):
+    """Collect participant names from a raw item.
+
+    PlanZ/KonOpas items carry participants in a ``people`` list of
+    ``{"id": …, "name": …}`` objects; some other formats use a plain list of
+    names or a comma-separated ``participants`` string.
+    """
+    names = []
+    for key in ("people", "participants", "speakers"):
+        value = raw.get(key)
+        if isinstance(value, str):
+            names.extend(clean_html_text(part) for part in re.split(r"[,;]", value))
+        elif isinstance(value, list):
+            for person in value:
+                if isinstance(person, dict):
+                    name = person.get("name") or person.get("title") or ""
+                else:
+                    name = person
+                names.append(clean_html_text(name))
+    result = []
+    for name in names:
+        if name and name not in result:
+            result.append(name)
+    return result
+
+
 def normalise_planz_item(raw):
     """Normalise a PlanZ/Zambia KonOpas item to our schema.
 
@@ -223,6 +249,7 @@ def normalise_planz_item(raw):
         "location": location,
         "description": description,
         "day": day,
+        "participants": extract_participants(raw),
     }
 
 
@@ -254,6 +281,7 @@ def normalise_grenadine_item(raw):
         "location": location,
         "description": description,
         "day": day,
+        "participants": extract_participants(raw),
     }
 
 
@@ -595,6 +623,7 @@ def parse_detail_page(url, soup):
         "location": location,
         "description": description,
         "day": day,
+        "participants": [],
     }
 
 
@@ -623,6 +652,7 @@ def normalise_json_item(raw):
         "location": location,
         "description": description,
         "day": day,
+        "participants": extract_participants(raw),
     }
 
 
@@ -740,6 +770,7 @@ def try_ics():
                     "location": location,
                     "description": desc,
                     "day": day,
+                    "participants": [],
                 })
 
             if events:
@@ -843,6 +874,7 @@ def _parse_grenadine_pdf_bytes(pdf_bytes):
                             "location": location,
                             "description": description,
                             "day": current_day,
+                            "participants": [],
                         })
                         event_id_counter += 1
 

@@ -3,6 +3,7 @@ package org.eastercon2026.prog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -54,6 +55,15 @@ class DetailActivity : AppCompatActivity() {
         }
         findViewById<TextView>(R.id.detailDescription).text =
             description.ifEmpty { getString(R.string.no_description) }
+
+        val participants = intent.getStringArrayListExtra(EXTRA_PARTICIPANTS) ?: arrayListOf()
+        if (participants.isNotEmpty()) {
+            findViewById<TextView>(R.id.detailParticipantsLabel).visibility = View.VISIBLE
+            findViewById<TextView>(R.id.detailParticipants).apply {
+                visibility = View.VISIBLE
+                text = participants.joinToString("\n")
+            }
+        }
 
         btnGoing = findViewById(R.id.btnGoing)
         btnInterested = findViewById(R.id.btnInterested)
@@ -154,5 +164,6 @@ class DetailActivity : AppCompatActivity() {
         const val EXTRA_LOCATION = "extra_location"
         const val EXTRA_DESCRIPTION = "extra_description"
         const val EXTRA_DAY = "extra_day"
+        const val EXTRA_PARTICIPANTS = "extra_participants"
     }
 }

@@ -7,5 +7,6 @@ data class Event(
     val endTime: String,
     val location: String,
     val description: String,
-    val day: String
+    val day: String,
+    val participants: List<String> = emptyList()
 )
